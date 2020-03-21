@@ -5,60 +5,71 @@ This package is not thread safe.
 
 package arraylist
 
+import "fmt"
+
 // Ensure ArrayList has implement the PubicMethods interface;
 // If not will has error when build
-func assertInterfaceImplementation() {
-	var _ PublicListInterface = (*ArrayList)(nil)
+func assertBasicImplementation() {
+	var _ basicListOperation = (*ArrayList)(nil)
 }
 
 // ArrayList holds the elements in a slice
 type ArrayList struct {
 	elements []interface{}
-	size     int
 }
 
 // New create a new array list
-func New(values ...interface{}) *ArrayList {
+func New(items ...interface{}) *ArrayList {
 	l := &ArrayList{}
-	if len(values) != 0 {
-		l.Push(values...)
+
+	newLength := len(items)
+	if newLength != 0 {
+		l.elements = make([]interface{}, newLength)
+		for index, item := range items {
+			l.elements[index] = item
+		}
 	}
 
 	return l
 }
 
+// NewWithLength make(interface{}, length)
+func NewWithLength(length int) *ArrayList {
+	l := &ArrayList{}
+	l.elements = make([]interface{}, length)
+	return l
+}
+
 // Size return the size of elements
 func (l *ArrayList) Size() int {
-	return l.size
+	return len(l.elements)
 }
 
 // Push push one or more values to the end
-func (l *ArrayList) Push(values ...interface{}) {
-	l.expand(len(values))
-	for _, value := range values {
-		l.elements[l.size] = value
-		l.size++
-	}
+func (l *ArrayList) Push(items ...interface{}) {
+	l.elements = append(l.elements, items...)
+	// size += len(items)
 }
 
 // Insert insert item(s) at the index.
 // If index == l.Size() this function is equal Push();
 // If index > l.Size() return false
-func (l *ArrayList) Insert(index int, values ...interface{}) bool {
+func (l *ArrayList) Insert(index int, items ...interface{}) bool {
+	size := l.Size()
 	if l.outOfRange(index) {
-		if index == l.size {
-			l.Push(values...)
+		if index == size {
+			l.Push(items...)
 			return true
 		}
 		return false
 	}
 
-	delta := len(values)
-	l.expand(delta)
-	copy(l.elements[index+delta:], l.elements[index:l.size])
-	copy(l.elements[index:], values)
+	delta := len(items)
+	l.elements = append(l.elements, items...)
+	copy(l.elements[index+delta:], l.elements[index:size])
+	copy(l.elements[index:], items)
+	// size += delta
 
-	l.size += delta
 	return true
 }
 
@@ -70,21 +81,23 @@ func (l *ArrayList) Remove(index int) bool {
 	}
 
 	l.elements[index] = nil
-	copy(l.elements[index:], l.elements[index+1:l.size])
-	l.size--
+	size := l.Size()
+	copy(l.elements[index:], l.elements[index+1:size])
+	// size--
+	l.elements = l.elements[:size-1]
 
 	return true
 }
 
 // Clear clear all elements
 func (l *ArrayList) Clear() {
-	l.elements = []interface{}{}
-	l.size = 0
+	l.elements = make([]interface{}, 0)
 }
 
 // Get return the item at index.
 // If index is out of range return (nil, false)
 func (l *ArrayList) Get(index int) (interface{}, bool) {
+	fmt.Println(l.Size())
 	if l.outOfRange(index) {
 		return nil, false
 	}
@@ -95,7 +108,7 @@ func (l *ArrayList) Get(index int) (interface{}, bool) {
 // Set modify the item at index
 func (l *ArrayList) Set(index int, value interface{}) bool {
 	if l.outOfRange(index) {
-		if index == l.size {
+		if index == l.Size() {
 			l.Push(value)
 			return true
 		}
@@ -119,7 +132,7 @@ func (l *ArrayList) Swap(i, j int) bool {
 // IndexOf return the first index that equal value;
 // If not found, will return -1
 func (l *ArrayList) IndexOf(value interface{}) int {
-	if l.size == 0 {
+	if l.Size() == 0 {
 		return -1
 	}
 
@@ -132,9 +145,9 @@ func (l *ArrayList) IndexOf(value interface{}) int {
 	return -1
 }
 
-// ContainsAll If every items of values is in the list, will return true.
-func (l *ArrayList) ContainsAll(values ...interface{}) bool {
-	for _, value := range values {
+// ContainsAll If every item is in the list, will return true.
+func (l *ArrayList) ContainsAll(items ...interface{}) bool {
+	for _, value := range items {
 		index := l.IndexOf(value)
 		if index == -1 {
 			return false
@@ -145,27 +158,14 @@ func (l *ArrayList) ContainsAll(values ...interface{}) bool {
 
 // Clone return a copy of l.elements, not the references
 func (l *ArrayList) Clone() []interface{} {
-	newElements := make([]interface{}, l.size, l.size)
+	size := l.Size()
+	newElements := make([]interface{}, size, size)
 	copy(newElements, l.elements)
 	return newElements
 }
 
 ///////////////////////////////////////// Private method
 
-func (l *ArrayList) resize(cap int) {
-	newElments := make([]interface{}, cap, cap)
-	copy(newElments, l.elements)
-	l.elements = newElments
-}
-
-func (l *ArrayList) expand(delta int) {
-	capacity := cap(l.elements)
-	if l.Size()+delta >= capacity {
-		capacity = (capacity + delta) * 2
-		l.resize(capacity)
-	}
-}
-
 func (l *ArrayList) outOfRange(index int) bool {
-	return index < 0 || index >= l.size
+	return index < 0 || index >= l.Size()
 }
