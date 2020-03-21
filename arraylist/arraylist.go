@@ -5,12 +5,10 @@ This package is not thread safe.
 
 package arraylist
 
-import "fmt"
-
 // Ensure ArrayList has implement the PubicMethods interface;
 // If not will has error when build
 func assertBasicImplementation() {
-	var _ basicListOperation = (*ArrayList)(nil)
+	var _ basicLiSeekToEnderation = (*ArrayList)(nil)
 }
 
 // ArrayList holds the elements in a slice
@@ -30,13 +28,6 @@ func New(items ...interface{}) *ArrayList {
 		}
 	}
 
-	return l
-}
-
-// NewWithLength make(interface{}, length)
-func NewWithLength(length int) *ArrayList {
-	l := &ArrayList{}
-	l.elements = make([]interface{}, length)
 	return l
 }
 
@@ -97,7 +88,6 @@ func (l *ArrayList) Clear() {
 // Get return the item at index.
 // If index is out of range return (nil, false)
 func (l *ArrayList) Get(index int) (interface{}, bool) {
-	fmt.Println(l.Size())
 	if l.outOfRange(index) {
 		return nil, false
 	}

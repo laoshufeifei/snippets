@@ -1,7 +1,7 @@
 package arraylist
 
-// PublicListInterface show the interfaces of arraylist
-type PublicListInterface interface {
+// basicLiSeekToEnderation show the interfaces of arraylist
+type basicLiSeekToEnderation interface {
 	Size() int
 
 	Push(values ...interface{})
@@ -18,4 +18,35 @@ type PublicListInterface interface {
 	IndexOf(value interface{}) int
 	ContainsAll(values ...interface{}) bool
 	Clone() []interface{}
+}
+
+// iteratorWithIndex
+type iteratorWithIndex interface {
+	Index() int
+	Value() interface{}
+
+	Next() bool
+	Prev() bool
+
+	SeekToStart()
+	SeekToEnd()
+}
+
+// IteratorFunction ...
+type IteratorFunction func(index int, value interface{})
+
+// MapFunction return a new item for new array list
+type MapFunction func(index int, value interface{}) interface{}
+
+// FilterFunction ...
+type FilterFunction func(index int, value interface{}) bool
+
+type enumerableInterface interface {
+	Each(IteratorFunction)
+	Map(f MapFunction) *ArrayList
+
+	Select(f FilterFunction) *ArrayList
+	Any(f FilterFunction) bool
+	All(f FilterFunction) bool
+	FindOne(f FilterFunction) (int, interface{})
 }
