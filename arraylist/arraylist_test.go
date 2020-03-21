@@ -1,6 +1,7 @@
 package arraylist
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -201,4 +202,91 @@ func TestSeek(t *testing.T) {
 	iter.SeekToEnd()
 	test.False(iter.Next())
 	test.True(iter.Prev())
+}
+
+func TestSeekAndPush(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	iter := list.Iterator()
+
+	iter.SeekToEnd()
+
+	list.Push("d")
+	test.Equal(iter.Value(), "d")
+	test.Equal(iter.Index(), 3)
+}
+
+func TestEach(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	count := 0
+	list.Each(func(index int, value interface{}) {
+		test.Equal(count, index)
+		count++
+	})
+
+	test.Equal(count, list.Size())
+}
+
+func TestMap(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	newList := list.Map(func(index int, value interface{}) interface{} {
+		return strings.ToUpper(value.(string))
+	})
+
+	test.Equal(newList.Clone(), []interface{}{"A", "B", "C"})
+}
+
+func TestSelect(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	newList := list.Select(func(index int, value interface{}) bool {
+		return value != "b"
+	})
+
+	test.Equal(newList.Clone(), []interface{}{"a", "c"})
+}
+
+func TestAny(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	ret := list.Any(func(index int, value interface{}) bool {
+		return len(value.(string)) == 1
+	})
+
+	test.True(ret)
+}
+
+func TestAll(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	ret := list.All(func(index int, value interface{}) bool {
+		return len(value.(string)) > 1
+	})
+
+	test.False(ret)
+}
+
+func TestFindOne(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	findIndex, findValue := list.FindOne(func(index int, value interface{}) bool {
+		return len(value.(string)) == 1
+	})
+	test.Equal(findIndex, 0)
+	test.Equal(findValue, "a")
+
+	findIndex, findValue = list.FindOne(func(index int, value interface{}) bool {
+		return len(value.(string)) > 1
+	})
+	test.Equal(findIndex, -1)
+	test.Equal(findValue, nil)
 }

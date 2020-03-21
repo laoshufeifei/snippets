@@ -31,3 +31,22 @@ type iteratorWithIndex interface {
 	SeekToStart()
 	SeekToEnd()
 }
+
+// IteratorFunction ...
+type IteratorFunction func(index int, value interface{})
+
+// MapFunction return a new item for new array list
+type MapFunction func(index int, value interface{}) interface{}
+
+// FilterFunction ...
+type FilterFunction func(index int, value interface{}) bool
+
+type enumerableInterface interface {
+	Each(IteratorFunction)
+	Map(f MapFunction) *ArrayList
+
+	Select(f FilterFunction) *ArrayList
+	Any(f FilterFunction) bool
+	All(f FilterFunction) bool
+	FindOne(f FilterFunction) (int, interface{})
+}
