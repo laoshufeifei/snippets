@@ -1,7 +1,7 @@
 package arraylist
 
-// PublicListInterface show the interfaces of arraylist
-type PublicListInterface interface {
+// basicLiSeekToEnderation show the interfaces of arraylist
+type basicLiSeekToEnderation interface {
 	Size() int
 
 	Push(values ...interface{})
@@ -18,4 +18,16 @@ type PublicListInterface interface {
 	IndexOf(value interface{}) int
 	ContainsAll(values ...interface{}) bool
 	Clone() []interface{}
+}
+
+// iteratorWithIndex
+type iteratorWithIndex interface {
+	Index() int
+	Value() interface{}
+
+	Next() bool
+	Prev() bool
+
+	SeekToStart()
+	SeekToEnd()
 }

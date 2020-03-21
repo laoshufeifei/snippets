@@ -118,3 +118,87 @@ func TestListClone(t *testing.T) {
 	test.Equal(l.Clone(), []interface{}{"a", "b", "c"})
 	test.NotEqual(l.Clone(), items)
 }
+
+func TestIteratorForEmptyList(t *testing.T) {
+	test := assert.New(t)
+
+	list := New()
+	iter := list.Iterator()
+	test.False(iter.Next())
+	test.False(iter.Prev())
+}
+
+func TestNext(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	iter := list.Iterator()
+
+	count := 0
+	for iter.Next() {
+		index := iter.Index()
+		value := iter.Value()
+
+		getValue, ok := list.Get(index)
+		test.True(ok)
+		test.Equal(value, getValue)
+
+		test.Equal(count, index)
+		count++
+	}
+
+	test.Equal(count, list.Size())
+	test.Equal(iter.Index(), list.Size())
+}
+
+func TestPrev(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	iter := list.Iterator()
+
+	// seek to end
+	for iter.Next() {
+	}
+
+	count := 0
+	for iter.Prev() {
+		index := iter.Index()
+		value := iter.Value()
+
+		getValue, ok := list.Get(index)
+		test.True(ok)
+		test.Equal(value, getValue)
+
+		count++
+		test.Equal(count+index, list.Size())
+	}
+
+	test.Equal(count, list.Size())
+	test.Equal(iter.Index(), -1)
+}
+
+func TestSeek(t *testing.T) {
+	test := assert.New(t)
+
+	list := New("a", "b", "c")
+	iter := list.Iterator()
+
+	test.Equal(iter.Index(), -1)
+	test.True(iter.Next())
+	test.Equal(iter.Index(), 0)
+	test.Equal(iter.Value(), "a")
+
+	iter.SeekToStart()
+	test.Equal(iter.Index(), -1)
+
+	iter.SeekToEnd()
+	test.Equal(iter.Index(), list.Size())
+
+	iter.SeekToStart()
+	test.Equal(iter.Index(), -1)
+
+	iter.SeekToEnd()
+	test.False(iter.Next())
+	test.True(iter.Prev())
+}
