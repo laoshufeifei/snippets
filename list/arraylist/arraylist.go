@@ -146,8 +146,8 @@ func (l *ArrayList) ContainsAll(items ...interface{}) bool {
 	return true
 }
 
-// Clone return a copy of l.elements, not the references
-func (l *ArrayList) Clone() []interface{} {
+// Values return a copy of l.elements, not the references
+func (l *ArrayList) Values() []interface{} {
 	size := l.Size()
 	newElements := make([]interface{}, size, size)
 	copy(newElements, l.elements)

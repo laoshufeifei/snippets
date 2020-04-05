@@ -2,12 +2,12 @@ package binaryheap
 
 import (
 	"fmt"
-	"gossips/arraylist"
+	"gossips/list/arraylist"
 	"gossips/utils"
 	"strings"
 )
 
-// Heap ...
+// Heap 默认是实现是按照最小堆来实现的，如果需要最大堆，则修改 comparator 的返回值
 type Heap struct {
 	list       *arraylist.ArrayList
 	comparator utils.Comparator
@@ -65,7 +65,7 @@ func (h *Heap) Peek() (value interface{}, ok bool) {
 // String ...
 func (h *Heap) String() string {
 	values := []string{}
-	for _, v := range h.list.Clone() {
+	for _, v := range h.list.Values() {
 		values = append(values, fmt.Sprintf("%v", v))
 	}
 	return strings.Join(values, ", ")

@@ -17,7 +17,7 @@ type basicLiSeekToEnderation interface {
 
 	IndexOf(value interface{}) int
 	ContainsAll(values ...interface{}) bool
-	Clone() []interface{}
+	Values() []interface{}
 }
 
 // iteratorWithIndex
