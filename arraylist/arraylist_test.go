@@ -120,6 +120,19 @@ func TestListClone(t *testing.T) {
 	test.NotEqual(l.Clone(), items)
 }
 
+func TestListRange(t *testing.T) {
+	test := assert.New(t)
+
+	l := New("a", "b", "c")
+	s := l.Size()
+	test.Equal(s, 3)
+	test.True(l.outOfRange(s))
+	test.True(l.outOfRange(-1))
+
+	test.False(l.withinRange(s))
+	test.True(l.withinRange(0))
+}
+
 func TestIteratorForEmptyList(t *testing.T) {
 	test := assert.New(t)
 
