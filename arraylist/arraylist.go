@@ -157,5 +157,9 @@ func (l *ArrayList) Clone() []interface{} {
 ///////////////////////////////////////// Private method
 
 func (l *ArrayList) outOfRange(index int) bool {
-	return index < 0 || index >= l.Size()
+	return !l.withinRange(index)
+}
+
+func (l *ArrayList) withinRange(index int) bool {
+	return index >= 0 && index < l.Size()
 }
