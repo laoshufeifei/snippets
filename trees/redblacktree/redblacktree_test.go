@@ -1,6 +1,7 @@
 package redblacktree
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -346,6 +347,56 @@ func TestRemove5(t *testing.T) {
 	// fmt.Println(tree)
 }
 
+func TestOrder(t *testing.T) {
+	test := assert.New(t)
+	tree := New()
+	numbers := []int{5, 6, 7, 3, 4, 1, 2}
+	for _, i := range numbers {
+		tree.Put(i)
+	}
+	test.True(tree.isLegalTree())
+
+	// preorder
+	index := 0
+	preArray := make([]int, tree.Size)
+	tree.traverse = func(n *Node) {
+		preArray[index] = n.number
+		index++
+	}
+	tree.Preorder()
+	test.Equal(preArray, []int{6, 4, 2, 1, 3, 5, 7})
+
+	// inorder
+	index = 0
+	inArray := make([]int, tree.Size)
+	tree.traverse = func(n *Node) {
+		inArray[index] = n.number
+		index++
+	}
+	tree.Inorder()
+	test.Equal(inArray, []int{1, 2, 3, 4, 5, 6, 7})
+
+	// postorder
+	index = 0
+	postArray := make([]int, tree.Size)
+	tree.traverse = func(n *Node) {
+		postArray[index] = n.number
+		index++
+	}
+	tree.Postorder()
+	test.Equal(postArray, []int{1, 3, 2, 5, 4, 7, 6})
+
+	// levelorder
+	index = 0
+	levelArray := make([]int, tree.Size)
+	tree.traverse = func(n *Node) {
+		levelArray[index] = n.number
+		index++
+	}
+	tree.Levelorder()
+	test.Equal(levelArray, []int{6, 4, 7, 2, 5, 1, 3})
+}
+
 // TODO: convert this test to benchmark test
 // lifeTime unit is seconds
 func randomTest(lifeTime int64) bool {
@@ -375,5 +426,17 @@ func randomTest(lifeTime int64) bool {
 
 func TestRandomPutAndRemove(t *testing.T) {
 	test := assert.New(t)
-	test.True(randomTest(5))
+	test.True(randomTest(1))
+}
+
+func TestPrint(t *testing.T) {
+	test := assert.New(t)
+	tree := New()
+	numbers := []int{5, 6, 7, 3, 4, 1, 2}
+	for _, i := range numbers {
+		tree.Put(i)
+	}
+	test.True(tree.isLegalTree())
+
+	fmt.Println(tree)
 }

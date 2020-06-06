@@ -22,6 +22,8 @@ const (
 	rightSide
 )
 
+type traverseFunc func(n *Node)
+
 // Node ...
 type Node struct {
 	number int
@@ -34,13 +36,16 @@ type Node struct {
 
 // Tree ...
 type Tree struct {
-	Root *Node
-	Size int
+	Root     *Node
+	Size     int
+	traverse traverseFunc
 }
 
 // New ...
 func New() *Tree {
-	return &Tree{}
+	return &Tree{
+		traverse: traversePrint,
+	}
 }
 
 // Get ...
@@ -450,6 +455,84 @@ func (t *Tree) blackHight() (hight int) {
 	return
 }
 
+func traversePrint(n *Node) {
+	fmt.Println(n)
+}
+
+// Preorder ...
+func (t *Tree) Preorder() {
+	t.Root.preorderImple(t.traverse)
+}
+
+func (n *Node) preorderImple(f traverseFunc) {
+	if n == nil {
+		return
+	}
+
+	f(n)
+	n.left.preorderImple(f)
+	n.right.preorderImple(f)
+}
+
+// Inorder ...
+func (t *Tree) Inorder() {
+	t.Root.inorderImple(t.traverse)
+}
+
+func (n *Node) inorderImple(f traverseFunc) {
+	if n == nil {
+		return
+	}
+
+	n.left.inorderImple(f)
+	f(n)
+	n.right.inorderImple(f)
+}
+
+// Postorder ...
+func (t *Tree) Postorder() {
+	t.Root.postorderImple(t.traverse)
+}
+
+func (n *Node) postorderImple(f traverseFunc) {
+	if n == nil {
+		return
+	}
+
+	n.left.postorderImple(f)
+	n.right.postorderImple(f)
+	f(n)
+}
+
+// Levelorder ...
+func (t *Tree) Levelorder() {
+	if t.Root == nil {
+		return
+	}
+
+	queue := make(chan *Node, t.Size)
+	queue <- t.Root
+	// nextLevelSize := 1
+
+	for len(queue) > 0 {
+		n := <-queue
+		t.traverse(n)
+
+		if n.left != nil {
+			queue <- n.left
+		}
+
+		if n.right != nil {
+			queue <- n.right
+		}
+
+		// nextLevelSize--
+		// if nextLevelSize == 0 {
+		// 	nextLevelSize = len(queue)
+		// }
+	}
+}
+
 // getColor get node color
 func (n *Node) getColor() NodeColor {
 	if n == nil {
@@ -634,12 +717,12 @@ func (n *Node) blackCountWithinRoot() (count int) {
 	return
 }
 
-func (n *Node) string2() string {
+func (n *Node) String() string {
 	return fmt.Sprintf("%d", n.number)
 }
 
 // 彩色打印，有些情况下可能不好使
-func (n *Node) String() string {
+func (n *Node) string2() string {
 	if n.getColor() == black {
 		return fmt.Sprintf("%d", n.number)
 	}
