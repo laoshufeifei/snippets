@@ -54,6 +54,24 @@ func TestBasic(t *testing.T) {
 	test.Equal(tree.blackHight(), 1)
 }
 
+func TestSpecialSituation(t *testing.T) {
+	test := assert.New(t)
+
+	tree := New()
+	test.Equal(tree.Size, 0)
+	test.True(tree.Root == nil)
+	test.True(tree.isLegalTree())
+	tree.Remove(1)
+
+	tree.Put(3)
+	test.Equal(tree.Size, 1)
+	test.True(tree.Root.number == 3)
+
+	tree.Remove(3)
+	test.Equal(tree.Size, 0)
+	test.True(tree.Root == nil)
+}
+
 func TestNode(t *testing.T) {
 	test := assert.New(t)
 
@@ -70,11 +88,11 @@ func TestNode(t *testing.T) {
 	test.Equal(right.number, 5)
 	test.Equal(left.number, 1)
 
-	test.True(right.isRight())
-	test.False(right.isLeft())
+	test.True(right.whichSide() == rightSide)
+	test.False(right.whichSide() == leftSide)
 
-	test.True(left.isLeft())
-	test.False(left.isRight())
+	test.True(left.whichSide() == leftSide)
+	test.False(left.whichSide() == rightSide)
 
 	test.True(right.sibling() == left)
 	test.True(left.sibling() == right)

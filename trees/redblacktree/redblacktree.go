@@ -14,6 +14,14 @@ const (
 	black NodeColor = false
 )
 
+type nodeSide int
+
+const (
+	none nodeSide = iota
+	leftSide
+	rightSide
+)
+
 // Node ...
 type Node struct {
 	number int
@@ -111,8 +119,8 @@ func (t *Tree) fixPut(node *Node) {
 		// 这里应该用 uncle 的颜色来判断，因为有可能上溢
 		if uncle.getColor() == black {
 			// 需要旋转操作
-			if parent.isLeft() {
-				if node.isLeft() {
+			if parent.whichSide() == leftSide {
+				if node.whichSide() == leftSide {
 					// LL
 					t.rightRotate(grandparent)
 					parent.color = black
@@ -125,7 +133,7 @@ func (t *Tree) fixPut(node *Node) {
 					grandparent.color = red
 				}
 			} else {
-				if node.isLeft() {
+				if node.whichSide() == leftSide {
 					// RL
 					t.rightRotate(parent)
 					t.leftRotate(grandparent)
@@ -176,7 +184,7 @@ func (t *Tree) Remove(number int) {
 
 	if node.getColor() == red {
 		// 红结点肯定有父节点
-		if node.isLeft() {
+		if node.whichSide() == leftSide {
 			node.parent.left = nil
 		} else {
 			node.parent.right = nil
@@ -215,7 +223,7 @@ func (t *Tree) Remove(number int) {
 			child.color = black
 		}
 	} else {
-		if node.isLeft() {
+		if node.whichSide() == leftSide {
 			node.parent.left = child
 		} else {
 			node.parent.right = child
@@ -248,7 +256,7 @@ func (t *Tree) fixRemove(n *Node) {
 		// 兄弟是红色，父节点降级
 		sibling.color = black
 		parent.color = red
-		if sibling.isLeft() {
+		if sibling.whichSide() == leftSide {
 			t.rightRotate(parent)
 		} else {
 			t.leftRotate(parent)
@@ -261,8 +269,8 @@ func (t *Tree) fixRemove(n *Node) {
 	if nephew != nil {
 		// 从黑兄弟那里借红孩子
 		pc := parent.color
-		if sibling.isLeft() {
-			if nephew.isLeft() {
+		if sibling.whichSide() == leftSide {
+			if nephew.whichSide() == leftSide {
 				// LL
 				nephew.color = black
 				sibling.color = pc
@@ -277,7 +285,7 @@ func (t *Tree) fixRemove(n *Node) {
 				t.rightRotate(parent)
 			}
 		} else {
-			if nephew.isLeft() {
+			if nephew.whichSide() == leftSide {
 				// RL
 				nephew.color = pc
 				sibling.color = black
@@ -317,7 +325,7 @@ func (t *Tree) leftRotate(n *Node) {
 	if p == nil {
 		t.Root = r
 	} else {
-		if n.isLeft() {
+		if n.whichSide() == leftSide {
 			p.left = r
 		} else {
 			p.right = r
@@ -345,7 +353,7 @@ func (t *Tree) rightRotate(n *Node) {
 	if p == nil {
 		t.Root = l
 	} else {
-		if n.isLeft() {
+		if n.whichSide() == leftSide {
 			p.left = l
 		} else {
 			p.right = l
@@ -469,14 +477,17 @@ func (n *Node) checkColor() bool {
 	return true
 }
 
-// 必须保证 parent 不为空才能使用
-func (n *Node) isLeft() bool {
-	parent := n.parent
-	return parent.left == n
-}
+// 一定要注意 parent 为 nil 的情况
+func (n *Node) whichSide() nodeSide {
+	if n == nil || n.parent == nil {
+		return none
+	}
 
-func (n *Node) isRight() bool {
-	return !n.isLeft()
+	if n.parent.left == n {
+		return leftSide
+	}
+
+	return rightSide
 }
 
 func (n *Node) uncle() *Node {
@@ -504,7 +515,7 @@ func (n *Node) getRedChild() *Node {
 
 	// 优先使用判断同侧的
 	child1, child2 := n.left, n.right
-	if n.parent != nil && n.isRight() {
+	if n.whichSide() == rightSide {
 		child1, child2 = child2, child1
 	}
 
@@ -530,7 +541,7 @@ func (n *Node) getChild() *Node {
 
 	// 优先使用判断同侧的
 	child1, child2 := n.left, n.right
-	if n.parent != nil && n.isRight() {
+	if n.whichSide() == rightSide {
 		child1, child2 = child2, child1
 	}
 
@@ -551,15 +562,15 @@ func (n *Node) precursor() *Node {
 		return n.left.rightmost()
 	}
 
-	// n.left is nil if
+	// n.left is nil
 	p := n.parent
-	if p != nil && n.isRight() {
+	if n.whichSide() == rightSide {
 		return p
 	}
 
 	// n is left child and n.left is nil
 	for p != nil {
-		if p.parent != nil && p.isRight() {
+		if p.whichSide() == rightSide {
 			return p.parent
 		}
 		p = p.parent
@@ -579,13 +590,13 @@ func (n *Node) successor() *Node {
 	}
 
 	p := n.parent
-	if p != nil && n.isLeft() {
+	if n.whichSide() == leftSide {
 		return p
 	}
 
 	// n is right child and n.right is nil
 	for p != nil {
-		if p.parent != nil && p.isLeft() {
+		if p.whichSide() == leftSide {
 			return p.parent
 		}
 		p = p.parent
