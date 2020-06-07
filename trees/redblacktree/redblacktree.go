@@ -317,7 +317,7 @@ func (t *Tree) fixRemove(n *Node) {
 	}
 
 	sibling.color = red
-	parent.color = black
+	// parent.color = black
 	t.fixRemove(parent)
 }
 
@@ -744,6 +744,6 @@ func (n *Node) String() string {
 	}
 
 	// return fmt.Sprintf("%v", n.number)
-	return fmt.Sprintf("\033[31m%v\033[0m", n.number)
-	// return fmt.Sprintf("%v(r)", n.number)
+	// return fmt.Sprintf("\033[31m%v\033[0m", n.number)
+	return fmt.Sprintf("%v(r)", n.number)
 }

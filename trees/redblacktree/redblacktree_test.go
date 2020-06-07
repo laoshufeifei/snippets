@@ -247,86 +247,33 @@ func TestRemove1(t *testing.T) {
 	test := assert.New(t)
 
 	tree := New()
-	tree.Put(5)
-	tree.Put(6)
-	tree.Put(7)
-	tree.Put(3)
-	tree.Put(4)
-	tree.Put(1)
-	tree.Put(2)
+	numbers := []int{5, 6, 7, 3, 4, 1, 2}
+	for _, i := range numbers {
+		tree.Put(i)
+	}
+	// fmt.Println(tree)
+	test.True(tree.isLegalTree())
+
+	// 3
+	// 4-2-1
+	tree.Remove(6)
+	test.True(tree.isLegalTree())
 	// fmt.Println(tree)
 
+	// 4-1
 	tree.Remove(5)
-	test.Equal(tree.Root.number, 6)
-	test.Equal(tree.Root.left.number, 2)
-	test.Equal(tree.Root.right.number, 7)
+	tree.Remove(7)
 	test.True(tree.isLegalTree())
+	// fmt.Println(tree)
+
+	// 4-2-2
+	tree.Remove(3)
+	tree.Remove(4)
+	test.True(tree.isLegalTree())
+	// fmt.Println(tree)
 }
 
 func TestRemove2(t *testing.T) {
-	test := assert.New(t)
-
-	tree := New()
-	tree.Put(5)
-	tree.Put(6)
-	tree.Put(7)
-	tree.Put(3)
-	tree.Put(4)
-	tree.Put(1)
-	tree.Put(2)
-	// fmt.Println(tree)
-
-	tree.Remove(6)
-	test.Equal(tree.Root.number, 4)
-	test.Equal(tree.Root.left.number, 2)
-	test.Equal(tree.Root.right.number, 7)
-	test.True(tree.isLegalTree())
-}
-
-func TestRemove3(t *testing.T) {
-	test := assert.New(t)
-
-	tree := New()
-	tree.Put(5)
-	tree.Put(6)
-	tree.Put(7)
-	tree.Put(3)
-	tree.Put(4)
-	tree.Put(1)
-	tree.Put(2)
-	// fmt.Println(tree)
-	tree.Remove(4)
-	// fmt.Println(tree)
-
-	test.Equal(tree.Root.number, 6)
-	test.Equal(tree.Root.left.number, 2)
-	test.Equal(tree.Root.right.number, 7)
-	test.True(tree.isLegalTree())
-}
-
-func TestRemove4(t *testing.T) {
-	test := assert.New(t)
-
-	tree := New()
-	tree.Put(5)
-	tree.Put(6)
-	tree.Put(7)
-	tree.Put(3)
-	tree.Put(4)
-	tree.Put(1)
-	tree.Put(2)
-	// fmt.Println(tree)
-
-	tree.Remove(3)
-	tree.Remove(2)
-
-	test.Equal(tree.Root.number, 6)
-	test.Equal(tree.Root.left.number, 4)
-	test.Equal(tree.Root.right.number, 7)
-	test.True(tree.isLegalTree())
-}
-
-func TestRemove5(t *testing.T) {
 	test := assert.New(t)
 
 	tree := New()
@@ -337,6 +284,7 @@ func TestRemove5(t *testing.T) {
 	numbers = []int{3, 58, 61, 56, 90, 94}
 	for _, i := range numbers {
 		tree.Remove(i)
+		test.True(tree.isLegalTree())
 	}
 	// 全黑
 	test.True(tree.isLegalTree())
@@ -425,5 +373,5 @@ func randomTest(lifeTime int64) bool {
 
 func TestRandomPutAndRemove(t *testing.T) {
 	test := assert.New(t)
-	test.True(randomTest(1))
+	test.True(randomTest(2))
 }
