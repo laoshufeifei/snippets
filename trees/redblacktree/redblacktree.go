@@ -379,26 +379,45 @@ func (t *Tree) rightRotate(n *Node) {
 }
 
 func (t *Tree) String() string {
-	prefix := ""
-	return output(t.Root, &prefix)
+	if t.Root == nil {
+		return ""
+	}
+
+	str := ""
+	output(t.Root, "", &str, true)
+	return str
 }
 
-func output(node *Node, prefix *string) string {
-	str := ""
-
+func output(node *Node, prefix string, str *string, isRight bool) {
 	if node.right != nil {
-		newOffset := *prefix + "R---"
-		str += output(node.right, &newOffset)
+		// 如果觉得这里不好理解，先把这里给改成下面这句看看效果
+		// newPrefix := prefix + "    "
+		newPrefix := prefix
+		if isRight {
+			newPrefix += "|   "
+		} else {
+			newPrefix += "    "
+		}
+		output(node.right, newPrefix, str, false)
 	}
 
-	str += fmt.Sprintf("%s%v\n", *prefix, node)
+	*str += prefix
+	if isRight {
+		*str += "└── "
+	} else {
+		*str += "┌── "
+	}
+	*str += node.String() + "\n"
 
 	if node.left != nil {
-		newOffset := *prefix + "L---"
-		str += output(node.left, &newOffset)
+		newPrefix := prefix
+		if isRight {
+			newPrefix += "    "
+		} else {
+			newPrefix += "|   "
+		}
+		output(node.left, newPrefix, str, true)
 	}
-
-	return str
 }
 
 func (t *Tree) isLegalTree() bool {
@@ -512,6 +531,7 @@ func (t *Tree) Levelorder() {
 
 	queue := make(chan *Node, t.Size)
 	queue <- t.Root
+	// nextLevelSize 可以用来判断是什么是一行遍历完了
 	// nextLevelSize := 1
 
 	for len(queue) > 0 {
@@ -717,15 +737,13 @@ func (n *Node) blackCountWithinRoot() (count int) {
 	return
 }
 
-func (n *Node) String() string {
-	return fmt.Sprintf("%d", n.number)
-}
-
 // 彩色打印，有些情况下可能不好使
-func (n *Node) string2() string {
+func (n *Node) String() string {
 	if n.getColor() == black {
 		return fmt.Sprintf("%d", n.number)
 	}
 
+	// return fmt.Sprintf("%v", n.number)
 	return fmt.Sprintf("\033[31m%v\033[0m", n.number)
+	// return fmt.Sprintf("%v(r)", n.number)
 }

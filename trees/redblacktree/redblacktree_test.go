@@ -1,7 +1,6 @@
 package redblacktree
 
 import (
-	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -427,16 +426,4 @@ func randomTest(lifeTime int64) bool {
 func TestRandomPutAndRemove(t *testing.T) {
 	test := assert.New(t)
 	test.True(randomTest(1))
-}
-
-func TestPrint(t *testing.T) {
-	test := assert.New(t)
-	tree := New()
-	numbers := []int{5, 6, 7, 3, 4, 1, 2}
-	for _, i := range numbers {
-		tree.Put(i)
-	}
-	test.True(tree.isLegalTree())
-
-	fmt.Println(tree)
 }
