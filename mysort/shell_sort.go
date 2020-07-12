@@ -4,85 +4,61 @@ import (
 	"math"
 )
 
-func shellSortV1(ints []int) {
-	steps := shellStep(len(ints))
+type shellSorter struct {
+	Sorter
+}
+
+func newShellSorterV1() *shellSorter {
+	s := &shellSorter{}
+	s.sortImple = s.shellSortV1
+	return s
+}
+
+func newShellSorterV2() *shellSorter {
+	s := &shellSorter{}
+	s.sortImple = s.shellSortV2
+	return s
+}
+
+func (s *shellSorter) shellSortV1(ints []int) {
+	s.array = ints
+
+	steps := s.shellStep(len(ints))
 	for _, step := range steps {
-		shellImple(ints, step)
+		s.shellImple(step)
 	}
 }
 
-func shellSort(ints []int) {
-	steps := sedgewickStep(len(ints))
+func (s *shellSorter) shellSortV2(ints []int) {
+	s.array = ints
+
+	steps := s.sedgewickStep(len(ints))
 	for i := len(steps) - 1; i >= 0; i-- {
-		// shellImple2(ints, steps[i])
-		shellImple(ints, steps[i])
+		s.shellImple(steps[i])
 	}
 }
 
-// 无二分查找优化的版本
-func shellImple(ints []int, step int) {
-	count := len(ints)
+func (s *shellSorter) shellImple(step int) {
+	count := len(s.array)
 	for col := 0; col < step; col++ {
 		// col+step*0, col+step*1, col+step*2
 		for begin := col + step; begin < count; begin += step {
 			cur := begin
 			for cur > col {
 				pre := cur - step
-				if ints[cur] >= ints[pre] {
+				if s.CmpIndex(cur, pre) >= 0 {
 					break
 				}
-				ints[cur], ints[pre] = ints[pre], ints[cur]
+
+				s.Swap(cur, pre)
 				cur -= step
 			}
 		}
 	}
 }
 
-// 有二分查找优化的版本
-// 使用二分查找后反而变慢了，因为逆序对个数已经减少了，使用二分查找后比较的次数变多了
-func shellImple2(ints []int, step int) {
-	count := len(ints)
-	for col := 0; col < step; col++ {
-		// col+step*0, col+step*1, col+step*2
-		for begin := col + step; begin < count; begin += step {
-			if ints[begin] >= ints[begin-step] {
-				continue
-			}
-
-			// find pos for curl
-			pos := findSheelPos(ints, col, step, begin)
-			// inset ints[begin] to pos
-			insertSheelPosition(ints, begin, step, pos)
-		}
-	}
-}
-
-// [col, col+step, col+step*2, ..., curl)
-func findSheelPos(ints []int, col, step, cur int) int {
-	start, end := 0, cur/step
-	for start < end {
-		mid := (start + end) >> 1
-		index := col + step*mid
-		if ints[index] > ints[cur] {
-			end = mid
-		} else {
-			start = mid + 1
-		}
-	}
-	return col + step*start
-}
-
-func insertSheelPosition(ints []int, cur, step, pos int) {
-	bak := ints[cur]
-	for i := cur; i > pos; i -= step {
-		ints[i] = ints[i-step]
-	}
-
-	ints[pos] = bak
-}
-
 // 生成的序列是从大到小的
-func shellStep(count int) (steps []int) {
+func (s *shellSorter) shellStep(count int) (steps []int) {
 	step := count >> 1
 	for step > 0 {
 		steps = append(steps, step)
@@ -92,7 +68,8 @@ func shellStep(count int) (steps []int) {
 }
 
 // 生成的序列是从小到大的，使用的时候要倒序使用
-func sedgewickStep(count int) (steps []int) {
+// 1, 5, 19, 41, 109...
+func (s *shellSorter) sedgewickStep(count int) (steps []int) {
 	k, step := 0, 0
 	for {
 		// https://en.wikipedia.org/wiki/Shellsort
@@ -115,3 +92,62 @@ func sedgewickStep(count int) (steps []int) {
 	}
 	return
 }
+
+// 有二分查找的版本，运行速度反而变慢了，所以还是删了吧
+// 因为逆序对个数已经减少了，使用二分查找后比较的次数变多了
+// func newShellSorterV3() *shellSorter {
+// 	s := &shellSorter{}
+// 	s.sortImple = s.shellSortV3
+// 	return s
+// }
+
+// func (s *shellSorter) shellSortV3(ints []int) {
+// 	s.array = ints
+
+// 	steps := s.sedgewickStep(len(ints))
+// 	for i := len(steps) - 1; i >= 0; i-- {
+// 		s.shellImple2(steps[i])
+// 	}
+// }
+
+// // 有二分查找的版本
+// func (s *shellSorter) shellImple2(step int) {
+// 	count := len(s.array)
+// 	for col := 0; col < step; col++ {
+// 		// col+step*0, col+step*1, col+step*2
+// 		for begin := col + step; begin < count; begin += step {
+// 			if s.CmpIndex(begin, begin-step) >= 0 {
+// 				continue
+// 			}
+
+// 			// find pos for curl
+// 			pos := s.findPosition(col, step, begin)
+// 			// inset ints[begin] to pos
+// 			s.insertPosition(begin, step, pos)
+// 		}
+// 	}
+// }
+
+// // [col, col+step, col+step*2, ..., curl)
+// func (s *shellSorter) findPosition(col, step, cur int) int {
+// 	start, end := 0, cur/step
+// 	for start < end {
+// 		mid := (start + end) >> 1
+// 		index := col + step*mid
+// 		if s.CmpIndex(index, cur) > 0 {
+// 			end = mid
+// 		} else {
+// 			start = mid + 1
+// 		}
+// 	}
+// 	return col + step*start
+// }
+
+// func (s *shellSorter) insertPosition(cur, step, pos int) {
+// 	bak := s.array[cur]
+// 	for i := cur; i > pos; i -= step {
+// 		s.array[i] = s.array[i-step]
+// 	}
+
+// 	s.array[pos] = bak
+// }

@@ -1,22 +1,31 @@
 package mysort
 
-func selectSort(ints []int) {
+type selectSorter struct {
+	Sorter
+}
+
+func newSelectSorter() *selectSorter {
+	s := &selectSorter{}
+	s.sortImple = s.selectSort
+	return s
+}
+
+func (s *selectSorter) selectSort(ints []int) {
+	s.array = ints
+
 	count := len(ints)
 	for i := 0; i < count; i++ {
-		minIdx := selectMinIndex(ints, i, count)
-		ints[i], ints[minIdx] = ints[minIdx], ints[i]
+		minIdx := s.selectMinIndex(i, count)
+		s.Swap(i, minIdx)
 	}
 }
 
-func selectMinIndex(ints []int, start, end int) int {
-	if start >= end {
-		return -1
-	}
-
-	minIndex, minValue := start, ints[start]
+// [start, end)
+func (s *selectSorter) selectMinIndex(start, end int) int {
+	minIndex, minValue := start, s.array[start]
 	for i := start + 1; i < end; i++ {
-		if ints[i] < minValue {
-			minIndex, minValue = i, ints[i]
+		if s.CmpValue(s.array[i], minValue) < 0 {
+			minIndex, minValue = i, s.array[i]
 		}
 	}
 

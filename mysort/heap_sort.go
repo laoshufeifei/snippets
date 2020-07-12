@@ -1,73 +1,57 @@
 package mysort
 
 // 大顶堆
-type heap struct {
-	ints []int
-	size int
+type heapSorter struct {
+	Sorter
+	heapSize int // 堆的 size (也就是未排序的个数)
 }
 
-func newHeap(ints []int) *heap {
-	size := len(ints)
-	h := &heap{
-		// 拷贝个结构体代价不大
-		ints: ints,
-		size: size,
-	}
+func newHeapSorter() *heapSorter {
+	s := &heapSorter{}
+	s.sortImple = s.heapSort
+	return s
+}
 
+func (h *heapSorter) heapSort(ints []int) {
+	// h := newHeap(ints)
+	h.array = ints
+	size := len(ints)
+	h.heapSize = size
+
+	// 自底而上的下溢
 	index := size>>1 - 1
 	for i := index; i >= 0; i-- {
 		h.shifDown(i)
 	}
 
-	return h
+	for h.heapSize > 0 {
+		h.Swap(0, h.heapSize-1)
+		h.heapSize--
+		h.shifDown(0)
+	}
 }
 
 // 大顶堆
-func (h *heap) shifDown(index int) {
+// 如果使用几个中间变量把 value 值保存下来，然后比较 value，会快一点点
+func (h *heapSorter) shifDown(index int) {
 	leftIndex := index*2 + 1
-	for leftIndex < h.size {
-		value := h.ints[index]
+	rightIndex, biggerIndex := 0, 0
+	for leftIndex < h.heapSize {
+		biggerIndex = leftIndex
 
-		leftValue := h.ints[leftIndex]
-		biggerIndex, biggerValue := leftIndex, leftValue
-
-		rightIndex := leftIndex + 1
-		if rightIndex < h.size {
-			rightValue := h.ints[rightIndex]
-			if rightValue > leftValue {
-				biggerIndex, biggerValue = rightIndex, rightValue
+		rightIndex = leftIndex + 1
+		if rightIndex < h.heapSize {
+			if h.CmpIndex(rightIndex, leftIndex) > 0 {
+				biggerIndex = rightIndex
 			}
 		}
 
 		// swap index, biggerIndex
-		if biggerValue > value {
-			h.ints[index], h.ints[biggerIndex] = h.ints[biggerIndex], h.ints[index]
+		if h.CmpIndex(biggerIndex, index) > 0 {
+			h.Swap(biggerIndex, index)
 		}
 
 		index = biggerIndex
 		leftIndex = index*2 + 1
-	}
-}
-
-func (h *heap) pop() int {
-	if h.size == 0 {
-		return 0
-	}
-
-	header := h.ints[0]
-	h.size--
-
-	h.ints[0] = h.ints[h.size]
-	h.shifDown(0)
-	return header
-}
-
-func heapSort(ints []int) {
-	h := newHeap(ints)
-
-	count := len(ints)
-	for index := 1; index <= count; index++ {
-		ints[count-index] = h.pop()
-		// fmt.Println(ints)
 	}
 }

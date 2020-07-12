@@ -26,5 +26,5 @@ func testSlice() {
 }
 
 func main() {
-	mysort.TestBench()
+	mysort.BenchmarkTestSorters()
 }

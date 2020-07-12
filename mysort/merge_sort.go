@@ -1,38 +1,48 @@
 package mysort
 
-// 临时空间，提前分配好更快
-var tmp []int
-
-func mergeSort(ints []int) {
-	tmp = make([]int, len(ints)>>1)
-	mergeSortImpl(ints, 0, len(ints))
+type mergeSorter struct {
+	Sorter
+	// 临时空间，提前分配好更快
+	tmp []int
 }
 
-func mergeSortImpl(ints []int, start, end int) {
+func newMergeSorter() *mergeSorter {
+	s := &mergeSorter{}
+	s.sortImple = s.mergeSort
+	return s
+}
+
+func (s *mergeSorter) mergeSort(ints []int) {
+	s.array = ints
+	s.tmp = make([]int, len(ints)>>1)
+
+	s.mergeSortImpl(0, len(ints))
+}
+
+func (s *mergeSorter) mergeSortImpl(start, end int) {
 	if end-start < 2 {
 		return
 	}
 
 	mid := (end + start) >> 1
-	mergeSortImpl(ints, start, mid)
-	mergeSortImpl(ints, mid, end)
-	merge(ints, start, mid, end)
+	s.mergeSortImpl(start, mid)
+	s.mergeSortImpl(mid, end)
+	s.merge(start, mid, end)
 }
 
 // [start, mid) [mid, end)
-func merge(ints []int, start, mid, end int) {
-	copy(tmp, ints[start:mid+1])
+func (s *mergeSorter) merge(start, mid, end int) {
+	copy(s.tmp, s.array[start:mid+1])
 
 	// fmt.Printf("merge: [%d, %d) [%d, %d)\n", start, mid, mid, end)
 	i, j := 0, mid
 	index := start
 	for i < (mid-start) && j < end {
-		vi, vj := tmp[i], ints[j]
-		if vi < vj {
-			ints[index] = tmp[i]
+		if s.CmpValue(s.tmp[i], s.array[j]) < 0 {
+			s.array[index] = s.tmp[i]
 			i++
 		} else {
-			ints[index] = ints[j]
+			s.array[index] = s.array[j]
 			j++
 		}
 
@@ -40,10 +50,8 @@ func merge(ints []int, start, mid, end int) {
 	}
 
 	for i < (mid - start) {
-		ints[index] = tmp[i]
+		s.array[index] = s.tmp[i]
 		index++
 		i++
 	}
-
-	// fmt.Println(ints)
 }

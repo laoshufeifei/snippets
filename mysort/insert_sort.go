@@ -1,24 +1,50 @@
 package mysort
 
-func insertSortV1(ints []int) {
+type insertSorter struct {
+	Sorter
+}
+
+func newInsertSorterV1() *insertSorter {
+	s := &insertSorter{}
+	s.sortImple = s.insertSortV1
+	return s
+}
+
+func newInsertSorterV2() *insertSorter {
+	s := &insertSorter{}
+	s.sortImple = s.insertSortV2
+	return s
+}
+
+func newInsertSorterV3() *insertSorter {
+	s := &insertSorter{}
+	s.sortImple = s.insertSortV3
+	return s
+}
+
+func (s *insertSorter) insertSortV1(ints []int) {
+	s.array = ints
 	count := len(ints)
+
 	for i := 1; i < count; i++ {
 		for j := i; j > 0; j-- {
-			if ints[j-1] <= ints[j] {
+			if s.CmpIndex(j-1, j) <= 0 {
 				break
 			}
-			ints[j-1], ints[j] = ints[j], ints[j-1]
+			s.Swap(j-1, j)
 		}
 	}
 }
 
-func insertSortV2(ints []int) {
+func (s *insertSorter) insertSortV2(ints []int) {
+	s.array = ints
 	count := len(ints)
+
 	for i := 1; i < count; i++ {
-		bak := ints[i]
+		bak := s.array[i]
 		j := i
 		for ; j > 0; j-- {
-			if ints[j-1] <= bak {
+			if s.CmpValue(s.array[j-1], bak) <= 0 {
 				break
 			}
 			ints[j] = ints[j-1]
@@ -27,45 +53,44 @@ func insertSortV2(ints []int) {
 	}
 }
 
-func insertSortV3(ints []int) {
+// 使用二分查找优化
+func (s *insertSorter) insertSortV3(ints []int) {
+	s.array = ints
 	count := len(ints)
-	for i := 1; i < count; i++ {
-		pos := findPosition(ints, i)
-		insert(ints, i, pos)
-	}
-}
 
-// 在完全随机的数组排序中优化提升有限
-func insertSort(ints []int) {
-	count := len(ints)
 	for i := 1; i < count; i++ {
-		if ints[i] >= ints[i-1] {
-			continue
-		}
+		// 这句话优化有限可加可不加
+		// if s.CmpIndex(i, i-1) >= 0 {
+		// 	continue
+		// }
 
-		pos := findPosition(ints, i)
-		insert(ints, i, pos)
+		pos := s.findPosition(i)
+		s.insert(i, pos)
 	}
 }
 
 // 将 srcIndex 位置的元素插入到 dstIndex
-func insert(ints []int, srcIndex, dstIndex int) {
-	bak := ints[srcIndex]
-	// [srcIndex, dstIndex)
-	for i := srcIndex; i > dstIndex; i-- {
-		ints[i] = ints[i-1]
+func (s *insertSorter) insert(srcIndex, dstIndex int) {
+	if srcIndex == dstIndex {
+		return
 	}
 
-	ints[dstIndex] = bak
+	bak := s.array[srcIndex]
+	// [srcIndex, dstIndex)
+	for i := srcIndex; i > dstIndex; i-- {
+		s.array[i] = s.array[i-1]
+	}
+
+	s.array[dstIndex] = bak
 }
 
 // [0, index) 已经排好序了
 // 查找 ints[index] 元素应该放在什么位置
-func findPosition(ints []int, index int) (pos int) {
+func (s *insertSorter) findPosition(index int) (pos int) {
 	start, end := 0, index
 	for start < end {
 		mid := (start + end) >> 1
-		if ints[mid] > ints[index] {
+		if s.CmpIndex(mid, index) > 0 {
 			end = mid
 		} else {
 			start = mid + 1
