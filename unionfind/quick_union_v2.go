@@ -21,11 +21,10 @@ func newQuickUnionV2(size int) *QuickUnionV2 {
 
 // Find 返回所有集合的父节点
 func (u *QuickUnionV2) Find(idx int) int {
-	p := idx
-	for p != u.parents[p] {
-		p = u.parents[p]
+	for idx != u.parents[idx] {
+		idx = u.parents[idx]
 	}
-	return p
+	return idx
 }
 
 // Union 合并 idx1 与 idx2 所在的集合
