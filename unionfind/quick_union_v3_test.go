@@ -62,13 +62,14 @@ func TestQuickUnionPathCompression(t *testing.T) {
 	// 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	union := newQuickUnionV3(7)
 	for i := 0; i < 6; i++ {
-		union.parents[i] = i + 1
+		// union.parents[i] = i + 1
+		union.setParent(i, i+1)
 	}
 
 	test.Equal(union.FindWithPathCompression(0), 6)
 	for i := 0; i < 7; i++ {
 		test.Equal(union.Find(i), 6)
-		test.Equal(union.parents[i], 6)
+		test.Equal(union.getParent(i), 6)
 	}
 }
 
@@ -79,7 +80,8 @@ func TestQuickUnionPathSplit(t *testing.T) {
 	// 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	union := newQuickUnionV3(7)
 	for i := 0; i < 6; i++ {
-		union.parents[i] = i + 1
+		// union.parents[i] = i + 1
+		union.setParent(i, i+1)
 	}
 
 	// +- 4 <- 2 <- 0
@@ -87,13 +89,13 @@ func TestQuickUnionPathSplit(t *testing.T) {
 	// +- 5 <- 3 <- 1
 	test.Equal(union.FindWithPathSplit(0), 6)
 
-	test.Equal(union.parents[0], 2)
-	test.Equal(union.parents[2], 4)
-	test.Equal(union.parents[4], 6)
+	test.Equal(union.getParent(0), 2)
+	test.Equal(union.getParent(2), 4)
+	test.Equal(union.getParent(4), 6)
 
-	test.Equal(union.parents[1], 3)
-	test.Equal(union.parents[3], 5)
-	test.Equal(union.parents[5], 6)
+	test.Equal(union.getParent(1), 3)
+	test.Equal(union.getParent(3), 5)
+	test.Equal(union.getParent(5), 6)
 }
 
 func TestQuickUnionPathHalf(t *testing.T) {
@@ -103,7 +105,8 @@ func TestQuickUnionPathHalf(t *testing.T) {
 	// 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	union := newQuickUnionV3(7)
 	for i := 0; i < 6; i++ {
-		union.parents[i] = i + 1
+		// union.parents[i] = i + 1
+		union.setParent(i, i+1)
 	}
 
 	// +--- 5
@@ -115,10 +118,10 @@ func TestQuickUnionPathHalf(t *testing.T) {
 	//           +--- 0
 	test.Equal(union.FindWithPathHalf(0), 6)
 
-	test.Equal(union.parents[0], 2)
-	test.Equal(union.parents[1], 2)
-	test.Equal(union.parents[2], 4)
-	test.Equal(union.parents[3], 4)
-	test.Equal(union.parents[4], 6)
-	test.Equal(union.parents[5], 6)
+	test.Equal(union.getParent(0), 2)
+	test.Equal(union.getParent(1), 2)
+	test.Equal(union.getParent(2), 4)
+	test.Equal(union.getParent(3), 4)
+	test.Equal(union.getParent(4), 6)
+	test.Equal(union.getParent(5), 6)
 }

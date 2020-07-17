@@ -19,6 +19,18 @@ func newQuickUnionV3(size int) *QuickUnionV3 {
 	return u
 }
 
+func (u *QuickUnionV3) getParent(idx int) int {
+	return u.parents[idx]
+}
+
+func (u *QuickUnionV3) getGrandparent(idx int) int {
+	return u.getParent(u.getParent(idx))
+}
+
+func (u *QuickUnionV3) setParent(idx, value int) {
+	u.parents[idx] = value
+}
+
 // Find 返回所有集合的父节点(路径压缩)
 func (u *QuickUnionV3) Find(idx int) int {
 	return u.FindWithPathHalf(idx)
@@ -26,20 +38,20 @@ func (u *QuickUnionV3) Find(idx int) int {
 
 // FindWithPathCompression 返回所有集合的父节点(路径压缩)
 func (u *QuickUnionV3) FindWithPathCompression(idx int) int {
-	if idx != u.parents[idx] {
-		// p := u.parents[idx]
-		// root := u.FindWithPathCompression(p)
-		// u.parents[idx] = root
-		u.parents[idx] = u.FindWithPathCompression(u.parents[idx])
+	if idx != u.getParent(idx) {
+		p := u.getParent(idx)
+		root := u.FindWithPathCompression(p)
+		u.setParent(idx, root)
 	}
-	return u.parents[idx]
+	return u.getParent(idx)
 }
 
 // FindWithPathSplit 返回所有集合的父节点(路径分裂)
 func (u *QuickUnionV3) FindWithPathSplit(idx int) int {
-	for idx != u.parents[idx] {
-		p := u.parents[idx]
-		u.parents[idx] = u.parents[p]
+	for idx != u.getParent(idx) {
+		p := u.getParent(idx)
+		g := u.getGrandparent(idx)
+		u.setParent(idx, g)
 		idx = p
 	}
 	return idx
@@ -47,9 +59,9 @@ func (u *QuickUnionV3) FindWithPathSplit(idx int) int {
 
 // FindWithPathHalf 返回所有集合的父节点(路径减半)
 func (u *QuickUnionV3) FindWithPathHalf(idx int) int {
-	for idx != u.parents[idx] {
-		g := u.parents[u.parents[idx]]
-		u.parents[idx] = g
+	for idx != u.getParent(idx) {
+		g := u.getGrandparent(idx)
+		u.setParent(idx, g)
 		idx = g
 	}
 	return idx
