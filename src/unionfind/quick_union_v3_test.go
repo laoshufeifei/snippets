@@ -55,7 +55,7 @@ func TestQuickUnionV3(t *testing.T) {
 	test.True(union.IsSameUnion(2, 4))
 }
 
-func TestQuickUnionPathCompression(t *testing.T) {
+func TestQuickUnionPathCompressionV3(t *testing.T) {
 	test := assert.New(t)
 	test.Equal(1, 1)
 
@@ -73,7 +73,7 @@ func TestQuickUnionPathCompression(t *testing.T) {
 	}
 }
 
-func TestQuickUnionPathSplit(t *testing.T) {
+func TestQuickUnionPathSplitV3(t *testing.T) {
 	test := assert.New(t)
 	test.Equal(1, 1)
 
@@ -98,7 +98,7 @@ func TestQuickUnionPathSplit(t *testing.T) {
 	test.Equal(union.getParent(5), 6)
 }
 
-func TestQuickUnionPathHalf(t *testing.T) {
+func TestQuickUnionPathHalfV3(t *testing.T) {
 	test := assert.New(t)
 	test.Equal(1, 1)
 
