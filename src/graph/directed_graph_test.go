@@ -114,7 +114,6 @@ func TestGraphDFS2(t *testing.T) {
 
 func TestGraphKruskal(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	g := newDirectedGraph()
 	edges := []string{
@@ -148,4 +147,39 @@ func TestGraphKruskal(t *testing.T) {
 		totalWeight += e.weight
 	}
 	test.Equal(totalWeight, 37.)
+}
+
+func TestGraphDijkstra(t *testing.T) {
+	test := assert.New(t)
+
+	g := newDirectedGraph()
+	edges := []string{
+		"A, B, 10",
+		"A, D, 30",
+		"A, E, 100",
+		"B, C, 50",
+		"C, E, 10",
+		"D, C, 20",
+		"D, E, 60",
+	}
+	for _, s := range edges {
+		parts := strings.Split(s, ",")
+		parts[2] = strings.TrimSpace(parts[2])
+		weight, _ := strconv.ParseFloat(parts[2], 64)
+
+		g.addEdge(parts[0], parts[1], weight)
+	}
+
+	results := g.dijkstra("A")
+	weightB, _ := results["B"]
+	test.Equal(weightB, 10.)
+
+	weightC, _ := results["C"]
+	test.Equal(weightC, 50.)
+
+	weightD, _ := results["D"]
+	test.Equal(weightD, 30.)
+
+	weightE, _ := results["E"]
+	test.Equal(weightE, 60.)
 }

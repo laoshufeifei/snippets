@@ -47,10 +47,10 @@ func (g *DirectedGraph) removeVertex(name string) {
 	}
 	delete(g.vertices, name)
 
-	for _, e := range vertex.inMaps {
+	for _, e := range vertex.inEdges.Items {
 		g.edgeSet.Remove(e)
 	}
-	for _, e := range vertex.outMaps {
+	for _, e := range vertex.outEdges.Items {
 		g.edgeSet.Remove(e)
 	}
 }
@@ -101,7 +101,7 @@ func (g *DirectedGraph) breadthFirstSearch(name string) [][]*vertex {
 		index++
 		oneLevel = append(oneLevel, v)
 
-		for _, e := range v.outMaps {
+		for _, e := range v.outEdges.Items {
 			if hasPushSet.Contains(e.toVertex) {
 				continue
 			}
@@ -139,7 +139,7 @@ func (g *DirectedGraph) depthFirstSearch(name string) []*vertex {
 		vertex := iter.(*vertex)
 		results = append(results, vertex)
 
-		for _, e := range vertex.outMaps {
+		for _, e := range vertex.outEdges.Items {
 			to := e.toVertex
 			if hasPushSet.Contains(to) {
 				continue
@@ -173,7 +173,7 @@ func (g *DirectedGraph) dfs(begin *vertex, results *[]*vertex, hadSearch map[str
 
 	*results = append(*results, begin)
 	hadSearch[begin.name] = true
-	for _, e := range begin.outMaps {
+	for _, e := range begin.outEdges.Items {
 		g.dfs(e.toVertex, results, hadSearch)
 	}
 }
@@ -201,6 +201,67 @@ func (g *DirectedGraph) kruskal() []*edge {
 
 		results = append(results, e)
 		union.Union(e.fromVertex, e.toVertex)
+	}
+
+	return results
+}
+
+func (g *DirectedGraph) dijkstra(begin string) map[string]float64 {
+	results := make(map[string]float64)
+
+	// clone 现有的边集合，用于管理 weight
+	weightManager := g.edgeSet.Clone()
+
+	// 从 begin 到其他几个顶点的 path
+	paths := newEdgeSet()
+	for _, v := range g.vertices {
+		if v.name == begin {
+			continue
+		}
+
+		e := newEdgeByVerticeName(begin, v.name)
+		e.setWeight(weightManager.getWeight(begin, v.name))
+
+		paths.Add(e)
+	}
+
+	for paths.Size() > 0 {
+		shortest := paths.findMinWeight()
+		toName := shortest.toVertex.name
+		// fmt.Printf("%s -- %s min weights is %.1f\n", begin, toName, shortest.weight)
+		paths.Remove(shortest)
+		results[toName] = shortest.weight
+
+		// 把 toName 作为 passby 对其他边进行松弛
+		es := g.edgeSet.findByFrom(toName)
+		for _, e := range es.Items {
+			dstName := e.toVertex.name
+			oldWeight := weightManager.getWeight(begin, dstName)
+			newWeight := weightManager.getWeightWithPassby(begin, dstName, toName)
+
+			if oldWeight > newWeight {
+				// 松弛成功
+				e.setWeight(newWeight)
+				weightManager.updateWeight(begin, dstName, newWeight)
+				paths.updateWeight(begin, dstName, newWeight)
+				// fmt.Printf("old: %s--%s is %.1f\n", begin, dstName, oldWeight)
+				// fmt.Printf("new: %s--%s--%s is %.1f\n", begin, toName, dstName, newWeight)
+			}
+		}
+
+		// for _, e := range paths.Items {
+		// 	oldWeight := e.weight
+		// 	dstName := e.toVertex.name
+		// 	newWeight := weightManager.getWeightWithPassby(begin, dstName, toName)
+		// 	if oldWeight > newWeight {
+		// 		// 松弛成功
+		// 		e.setWeight(newWeight)
+		// 		weightManager.updateWeight(begin, dstName, newWeight)
+		// 		// fmt.Printf("old: %s--%s is %.1f\n", begin, dstName, oldWeight)
+		// 		// fmt.Printf("new: %s--%s--%s is %.1f\n", begin, toName, dstName, newWeight)
+		// 	}
+		// }
+		// fmt.Println()
 	}
 
 	return results
