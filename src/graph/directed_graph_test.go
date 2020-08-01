@@ -183,3 +183,87 @@ func TestGraphDijkstra(t *testing.T) {
 	weightE, _ := results["E"]
 	test.Equal(weightE, 60.)
 }
+
+func TestGraphDellmanFord(t *testing.T) {
+	test := assert.New(t)
+	test.Equal(1, 1)
+
+	g := newDirectedGraph()
+	edges := []string{
+		"A, B, 10",
+		"A, E, 8",
+		"B, C, 8",
+		"B, E, -5",
+		"C, E, 10",
+		"D, C, 2",
+		"D, F, 6",
+		"E, D, 7",
+		"E, F, 3",
+	}
+	for _, s := range edges {
+		parts := strings.Split(s, ",")
+		parts[2] = strings.TrimSpace(parts[2])
+		weight, _ := strconv.ParseFloat(parts[2], 64)
+
+		g.addEdge(parts[0], parts[1], weight)
+	}
+
+	results := g.bellmanFord("A")
+
+	weightB, _ := results["B"]
+	test.Equal(weightB, 10.)
+
+	weightC, _ := results["C"]
+	test.Equal(weightC, 14.)
+
+	weightD, _ := results["D"]
+	test.Equal(weightD, 12.)
+
+	weightE, _ := results["E"]
+	test.Equal(weightE, 5.)
+
+	weightF, _ := results["F"]
+	test.Equal(weightF, 8.)
+}
+
+func TestGraphFloyd(t *testing.T) {
+	test := assert.New(t)
+	test.Equal(1, 1)
+
+	g := newDirectedGraph()
+	edges := []string{
+		"A, B, 10",
+		"A, E, 8",
+		"B, C, 8",
+		"B, E, -5",
+		"C, E, 10",
+		"D, C, 2",
+		"D, F, 6",
+		"E, D, 7",
+		"E, F, 3",
+	}
+	for _, s := range edges {
+		parts := strings.Split(s, ",")
+		parts[2] = strings.TrimSpace(parts[2])
+		weight, _ := strconv.ParseFloat(parts[2], 64)
+
+		g.addEdge(parts[0], parts[1], weight)
+	}
+
+	results := g.floyd("A")
+
+	weightB, _ := results["B"]
+	test.Equal(weightB, 10.)
+
+	weightC, _ := results["C"]
+	test.Equal(weightC, 14.)
+
+	weightD, _ := results["D"]
+	test.Equal(weightD, 12.)
+
+	weightE, _ := results["E"]
+	test.Equal(weightE, 5.)
+
+	weightF, _ := results["F"]
+	test.Equal(weightF, 8.)
+}

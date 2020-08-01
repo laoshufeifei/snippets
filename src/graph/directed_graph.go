@@ -221,7 +221,6 @@ func (g *DirectedGraph) dijkstra(begin string) map[string]float64 {
 
 		e := newEdgeByVerticeName(begin, v.name)
 		e.setWeight(weightManager.getWeight(begin, v.name))
-
 		paths.Add(e)
 	}
 
@@ -233,6 +232,7 @@ func (g *DirectedGraph) dijkstra(begin string) map[string]float64 {
 		results[toName] = shortest.weight
 
 		// 把 toName 作为 passby 对其他边进行松弛
+		// for _, e := range paths.Items { // 也可以这样来松弛
 		es := g.edgeSet.findByFrom(toName)
 		for _, e := range es.Items {
 			dstName := e.toVertex.name
@@ -248,20 +248,78 @@ func (g *DirectedGraph) dijkstra(begin string) map[string]float64 {
 				// fmt.Printf("new: %s--%s--%s is %.1f\n", begin, toName, dstName, newWeight)
 			}
 		}
+	}
 
-		// for _, e := range paths.Items {
-		// 	oldWeight := e.weight
-		// 	dstName := e.toVertex.name
-		// 	newWeight := weightManager.getWeightWithPassby(begin, dstName, toName)
-		// 	if oldWeight > newWeight {
-		// 		// 松弛成功
-		// 		e.setWeight(newWeight)
-		// 		weightManager.updateWeight(begin, dstName, newWeight)
-		// 		// fmt.Printf("old: %s--%s is %.1f\n", begin, dstName, oldWeight)
-		// 		// fmt.Printf("new: %s--%s--%s is %.1f\n", begin, toName, dstName, newWeight)
-		// 	}
-		// }
-		// fmt.Println()
+	return results
+}
+
+func (g *DirectedGraph) bellmanFord(begin string) map[string]float64 {
+	results := make(map[string]float64)
+
+	// clone 现有的边集合，用于管理 weight
+	weightManager := g.edgeSet.Clone()
+
+	// 对所有边进行 verticesSize - 1 次松弛
+	count := len(g.vertices) - 1
+	for i := 0; i < count; i++ {
+		for _, e := range g.edgeSet.Items {
+			dstName := e.toVertex.name
+			oldWeight := weightManager.getWeight(begin, dstName)
+
+			passby := e.fromVertex.name
+			newWeight := weightManager.getWeightWithPassby(begin, dstName, passby)
+
+			// relax begin-dstName with begin-passby-dstName
+			if oldWeight > newWeight {
+				// fmt.Printf("relax %s-%s(%.1f) with %s-%s-%s(%.1f)\n", begin, dstName, oldWeight, begin, passby, dstName, newWeight)
+				weightManager.updateWeight(begin, dstName, newWeight)
+			}
+		}
+	}
+
+	for _, v := range g.vertices {
+		if v.name != begin {
+			results[v.name] = weightManager.getWeight(begin, v.name)
+		}
+	}
+
+	return results
+}
+
+// floyd 本身属于多源算法，不需要传入起点，这里这是为了方便测试
+func (g *DirectedGraph) floyd(begin string) map[string]float64 {
+	results := make(map[string]float64)
+
+	// clone 现有的边集合，用于管理 weight
+	weightManager := g.edgeSet.Clone()
+
+	vs := make([]string, 0)
+	for name := range g.vertices {
+		vs = append(vs, name)
+	}
+
+	count := len(vs)
+	for k := 0; k < count; k++ {
+		passby := vs[k]
+
+		for i := 0; i < count; i++ {
+			from := vs[i]
+			for j := 0; j < count; j++ {
+				to := vs[j]
+
+				oldWeight := weightManager.getWeight(from, to)
+				newWeight := weightManager.getWeightWithPassby(from, to, passby)
+				if oldWeight > newWeight {
+					weightManager.updateWeight(from, to, newWeight)
+				}
+			}
+		}
+	}
+
+	for _, v := range g.vertices {
+		if v.name != begin {
+			results[v.name] = weightManager.getWeight(begin, v.name)
+		}
 	}
 
 	return results

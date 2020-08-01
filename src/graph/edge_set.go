@@ -133,6 +133,10 @@ func (set *EdgeSet) findMinWeight() *edge {
 }
 
 func (set *EdgeSet) getWeight(fromName, toName string) float64 {
+	if fromName == toName {
+		return 0.
+	}
+
 	e := set.find(fromName, toName)
 	if e == nil {
 		return math.MaxFloat64
