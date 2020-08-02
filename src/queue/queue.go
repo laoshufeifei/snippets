@@ -2,7 +2,7 @@ package queue
 
 import (
 	"fmt"
-	"gossips/list/arraylist"
+	"gossips/src/arraylist"
 	"strings"
 )
 
