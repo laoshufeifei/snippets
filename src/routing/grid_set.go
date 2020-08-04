@@ -1,29 +1,28 @@
 package routing
 
+import "sort"
+
+// GridItems ...
+type GridItems []*Grid
+
 // GridSet ...
 type GridSet struct {
-	Items []*grid
+	items GridItems
 }
+
+func (gs GridItems) Len() int           { return len(gs) }
+func (gs GridItems) Less(i, j int) bool { return gs[i].fWeight < gs[j].fWeight }
+func (gs GridItems) Swap(i, j int)      { gs[i], gs[j] = gs[j], gs[i] }
 
 func newGridSet() *GridSet {
 	return &GridSet{
-		Items: make([]*grid, 0),
+		items: make([]*Grid, 0),
 	}
-}
-
-// Clone ...
-func (set *GridSet) Clone() *GridSet {
-	newSet := &GridSet{
-		Items: make([]*grid, set.Size()),
-	}
-
-	copy(newSet.Items, set.Items)
-	return newSet
 }
 
 // Contains ...
-func (set *GridSet) Contains(g *grid) bool {
-	for _, ref := range set.Items {
+func (set *GridSet) Contains(g *Grid) bool {
+	for _, ref := range set.items {
 		if ref.Equals(g) {
 			return true
 		}
@@ -32,24 +31,24 @@ func (set *GridSet) Contains(g *grid) bool {
 	return false
 }
 
-// Add ...
-func (set *GridSet) Add(g *grid) {
+// Push ...
+func (set *GridSet) Push(g *Grid) {
 	if set.Contains(g) {
 		set.Remove(g)
 	}
 
-	set.Items = append(set.Items, g)
+	set.items = append(set.items, g)
 }
 
 // Remove ...
-func (set *GridSet) Remove(g *grid) {
-	count := len(set.Items)
+func (set *GridSet) Remove(g *Grid) {
+	count := len(set.items)
 	for i := 0; i < count; i++ {
-		edge := set.Items[i]
+		edge := set.items[i]
 		if edge.Equals(g) {
-			set.Items[i] = nil
-			copy(set.Items[i:], set.Items[i+1:count])
-			set.Items = set.Items[:count-1]
+			set.items[i] = nil
+			copy(set.items[i:], set.items[i+1:count])
+			set.items = set.items[:count-1]
 			return
 		}
 	}
@@ -57,5 +56,22 @@ func (set *GridSet) Remove(g *grid) {
 
 // Size ...
 func (set *GridSet) Size() int {
-	return len(set.Items)
+	return len(set.items)
+}
+
+// Sort ...
+func (set *GridSet) Sort() {
+	sort.Sort(set.items)
+}
+
+// Pop ...
+func (set *GridSet) Pop() *Grid {
+	if set.Size() <= 0 {
+		return nil
+	}
+
+	set.Sort()
+	old := set.items[0]
+	set.Remove(old)
+	return old
 }
