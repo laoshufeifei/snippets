@@ -117,7 +117,7 @@ func (m *gridMap) processSurrounding(parent *Grid) []*Grid {
 			dG = 14
 		}
 
-		if child == nil || child.isNotAvailable() || m.closeList.Contains(child) {
+		if child == nil || child.isNotAvailable() {
 			continue
 		}
 
@@ -130,6 +130,14 @@ func (m *gridMap) processSurrounding(parent *Grid) []*Grid {
 		newG := dG + parent.getG()
 		if m.openList.Contains(child) && oldG <= newG {
 			continue
+		}
+
+		// 如果已经在 close list中的 grid，需要再次加入到 open list
+		if m.closeList.Contains(child) {
+			if oldG <= newG {
+				continue
+			}
+			m.closeList.Remove(child)
 		}
 
 		child.parent = parent

@@ -31,6 +31,17 @@ func (set *GridSet) Contains(g *Grid) bool {
 	return false
 }
 
+// GetGridGWeight ...
+func (set *GridSet) GetGridGWeight(g *Grid) int {
+	for _, ref := range set.items {
+		if ref.Equals(g) {
+			return ref.gWeight
+		}
+	}
+
+	return 0
+}
+
 // Push ...
 func (set *GridSet) Push(g *Grid) {
 	if set.Contains(g) {
