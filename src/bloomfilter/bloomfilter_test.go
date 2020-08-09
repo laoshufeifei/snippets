@@ -22,26 +22,26 @@ func TestBloomFilterBasic(t *testing.T) {
 func TestBloomFilter(t *testing.T) {
 	test := assert.New(t)
 
-	allCont := uint64(100)
-	b := New(allCont, 0.001)
+	allCont := 100
+	b := New(uint64(allCont), 0.001)
 
-	putCount := uint64(100)
-	for i := uint64(0); i < putCount; i++ {
+	putCount := 100
+	for i := 0; i < putCount; i++ {
 		s := fmt.Sprintf("%d", i)
 		b.Put(s)
 	}
 
-	for i := uint64(0); i < putCount; i++ {
+	for i := 0; i < putCount; i++ {
 		s := fmt.Sprintf("%d", i)
 		test.True(b.Contains(s))
 	}
 
-	for i := uint64(0); i < putCount; i++ {
+	for i := 0; i < putCount; i++ {
 		s := fmt.Sprintf("%d", i)
 		test.True(b.Contains(s))
 	}
 
-	errCount := uint64(0)
+	errCount := 0
 	for i := putCount; i < putCount*2; i++ {
 		s := fmt.Sprintf("%d", i)
 		if b.Contains(s) {
