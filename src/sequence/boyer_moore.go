@@ -1,6 +1,8 @@
 package sequence
 
 // https://www.cnblogs.com/lanxuezaipiao/p/3452579.html
+// https://ethsonliu.com/2019/11/boyer-moore.html
+// https://dwnusbaum.github.io/boyer-moore-demo/
 // 坏字符规则：后移位数 = 坏字符的位置 - 搜索词中的上一次出现位置。
 // 好后缀规则：后移位数 = 好后缀的位置 - 搜索词中的上一次出现位置
 // 1) ABCDAB 中 AB 好后缀，位置是 5，上一次出现的位置是 1
