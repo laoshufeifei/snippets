@@ -150,4 +150,9 @@ func TestSinglyLinkedReverse(t *testing.T) {
 	test.Equal(l.Size(), 4)
 	test.Equal(l.header.value, "d")
 	test.Equal(l.tail.value, "a")
+
+	l2 := New("a")
+	test.Equal(l2.String(), "a")
+	l2.Reverse()
+	test.Equal(l2.String(), "a")
 }
