@@ -4,7 +4,10 @@ package sequence
 func brustForceSearch1(text, pattern string) int {
 	textLen := len(text)
 	patternLen := len(pattern)
-	if textLen == 0 || patternLen == 0 || patternLen > textLen {
+	if patternLen == 0 {
+		return 0
+	}
+	if patternLen > textLen {
 		return -1
 	}
 
