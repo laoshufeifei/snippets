@@ -19,8 +19,6 @@ func indexRabinKarp(text, pattern string) int {
 	// hashPattern 是 pattern 根据上述方法计算出的 hash 值
 	// pow 是 primeRK 的 len(pattern) 次幂
 	hashPattern, pow := hashStr(pattern)
-	// 有点不理解为什么不直接计算
-	// pow = myPow(n)
 
 	// 计算 text[:n] 的 hash 值
 	var hashText uint32
@@ -58,8 +56,12 @@ func hashStr(str string) (uint32, uint32) {
 		hash = hash*primeRK + uint32(str[i])
 	}
 
-	// 我们已 len(str) 为 6 为例来看此函数
+	// 快速幂算法
+	// 以 len(str) 为 6 为例来看此函数
 	// 6 的二进制是 110
+	// 6 = 1*2^2 + 1*2^1 + 0*2^0
+	// rk ^ 6 = rk ^ (2^2 + 2^1 + 0*2^1) = rk ^ (2^2) * rk ^ (2^1) * rk ^ 0
+	// rk ^ (2^2) = (rk^2) ^ 2 = (rk^2) * (rk^2) 即可以有之前的一个数值来推算出来
 	// 每次循环，pow 和 tmp 分别为
 	// i: 110  pow: 1  							tmp: rk
 	// i: 11   pow: 1  							tmp: rk ^ 2
@@ -74,12 +76,4 @@ func hashStr(str string) (uint32, uint32) {
 		tmp *= tmp
 	}
 	return hash, pow
-}
-
-func myPow(n int) uint32 {
-	var result uint32 = 1
-	for i := 1; i <= n; i++ {
-		result *= primeRK
-	}
-	return result
 }
