@@ -135,11 +135,11 @@ func boyerMoore(text, pattern string) int {
 	gs := initGoodSuffixes(pattern)
 
 	// pi 是在 pattern 中每次比较最右的位置
-	// ti 表示在 text 中每次移动后最左的位置，ti+pi 才是参与比较的字符
+	// ti 表示待匹配区域的最左索引，ti+pi 才是参与比较的字符
 	ti, pi := 0, 0
 	for ti <= textLen-patternLen {
 		pi = patternLen - 1
-		for pi >= 0 && text[pi+ti] == pattern[pi] {
+		for pi >= 0 && text[ti+pi] == pattern[pi] {
 			pi--
 		}
 

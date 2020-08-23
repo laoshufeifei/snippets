@@ -19,25 +19,33 @@ func indexRabinKarp(text, pattern string) int {
 	// hashPattern 是 pattern 根据上述方法计算出的 hash 值
 	// pow 是 primeRK 的 len(pattern) 次幂
 	hashPattern, pow := hashStr(pattern)
+	// 有点不理解为什么不直接计算
+	// pow = myPow(n)
 
-	// 计算 s[:n] 的 hash 值
-	var h uint32
+	// 计算 text[:n] 的 hash 值
+	var hashText uint32
 	for i := 0; i < n; i++ {
-		h = h*primeRK + uint32(text[i])
+		hashText = hashText*primeRK + uint32(text[i])
 	}
-	if h == hashPattern && text[:n] == pattern {
+	if hashText == hashPattern && text[:n] == pattern {
 		return 0
 	}
 
+	// 比如说 32123 中找 123
+	// 第一次 321 != 123，重点看怎么让 212 参与下一次比较的的
+	// 321 * 10 = 3210
+	// 3210 + 2 = 3212
+	// 3212 - 3 * 10^3 = 3212 - 3000 = 212
+	// 这里也可以先用 321 - 3 * 10 ^ 2(注意就不是使用代码中的 pow 了，而是 primeRK ^ (n-1))
 	for i := n; i < m; {
 		// 计算下一个子串的 hash 值
-		h *= primeRK
-		h += uint32(text[i])
-		h -= pow * uint32(text[i-n])
+		hashText *= primeRK
+		hashText += uint32(text[i])
+		hashText -= pow * uint32(text[i-n])
 		i++
 
-		// 如果 hash 相等 且子串相等，则返回对应下标
-		if h == hashPattern && text[i-n:i] == pattern {
+		// 使用 hash 快速排除，最后再精确匹配
+		if hashText == hashPattern && text[i-n:i] == pattern {
 			return i - n
 		}
 	}
@@ -50,21 +58,28 @@ func hashStr(str string) (uint32, uint32) {
 		hash = hash*primeRK + uint32(str[i])
 	}
 
-	// 下面我用 python 的乘方元素符 ** 代表乘方
 	// 我们已 len(str) 为 6 为例来看此函数
 	// 6 的二进制是 110
-	// 每次循环，pow 和 sq 分别为
-	// i: 110  pow: 1  							sq: rk
-	// i: 11   pow: 1  							sq: rk ** 2
-	// i: 1    pow: 1 * (rk ** 2)  				sq: rk ** 4
-	// i: 0    pow: 1* (rk ** 2) * (rk ** 4)  	sq: rk ** 8
-	// pow: 1* (rk ** 2) * (rk ** 4) = 1 * (rk ** 6) 即是 pow(rk, 6)
-	var pow, sq uint32 = 1, primeRK
+	// 每次循环，pow 和 tmp 分别为
+	// i: 110  pow: 1  							tmp: rk
+	// i: 11   pow: 1  							tmp: rk ^ 2
+	// i: 1    pow: 1 * (rk ^ 2)  				tmp: rk ^ 4
+	// i: 0    pow: 1* (rk ^ 2) * (rk ^ 4)  	tmp: rk ^ 8
+	// pow: 1* (rk ^ 2) * (rk ^ 4) = 1 * (rk ^ 6) 即是 pow(rk, 6)
+	var pow, tmp uint32 = 1, primeRK
 	for i := len(str); i > 0; i >>= 1 {
 		if i&1 != 0 {
-			pow *= sq
+			pow *= tmp
 		}
-		sq *= sq
+		tmp *= tmp
 	}
 	return hash, pow
+}
+
+func myPow(n int) uint32 {
+	var result uint32 = 1
+	for i := 1; i <= n; i++ {
+		result *= primeRK
+	}
+	return result
 }
