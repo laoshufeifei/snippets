@@ -57,7 +57,6 @@ func TestQuickUnionV3(t *testing.T) {
 
 func TestQuickUnionPathCompressionV3(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	// 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	union := newQuickUnionV3(7)
@@ -75,7 +74,6 @@ func TestQuickUnionPathCompressionV3(t *testing.T) {
 
 func TestQuickUnionPathSplitV3(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	// 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	union := newQuickUnionV3(7)
@@ -100,7 +98,6 @@ func TestQuickUnionPathSplitV3(t *testing.T) {
 
 func TestQuickUnionPathHalfV3(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	// 6 <- 5 <- 4 <- 3 <- 2 <- 1 <- 0
 	union := newQuickUnionV3(7)

@@ -9,7 +9,6 @@ import (
 func TestRabinKarp(t *testing.T) {
 	test := assert.New(t)
 
-	test.Equal(1, 1)
 	test.Equal(indexRabinKarp("xabcd", "abc"), 1)
 
 	test.Equal(indexRabinKarp("xxxxbabcdab", "babcdab"), 4)

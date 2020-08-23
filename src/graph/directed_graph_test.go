@@ -186,7 +186,6 @@ func TestGraphDijkstra(t *testing.T) {
 
 func TestGraphDellmanFord(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	g := newDirectedGraph()
 	edges := []string{
@@ -228,7 +227,6 @@ func TestGraphDellmanFord(t *testing.T) {
 
 func TestGraphFloyd(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	g := newDirectedGraph()
 	edges := []string{

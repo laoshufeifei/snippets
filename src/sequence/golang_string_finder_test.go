@@ -8,7 +8,6 @@ import (
 
 func TestBM(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	finder := makeStringFinder("EXAMPLE")
 	idx := finder.next("HERE IS A SIMPLE EXAMPLE")

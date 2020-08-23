@@ -8,7 +8,6 @@ import (
 
 func TestAStar(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	s := [][]byte{
 		//0    1    2    3    4    5    6
@@ -20,12 +19,12 @@ func TestAStar(t *testing.T) {
 	}
 
 	m := newGridMap(s, len(s), len(s[0]))
-	m.astar()
+	results := m.astar()
+	test.True(len(results) > 0)
 }
 
 func TestAStar2(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	s := [][]byte{
 		//0    1    2    3    4    5    6    7    8    9    10
@@ -43,5 +42,6 @@ func TestAStar2(t *testing.T) {
 	}
 
 	m := newGridMap(s, len(s), len(s[0]))
-	m.astar()
+	results := m.astar()
+	test.True(len(results) > 0)
 }

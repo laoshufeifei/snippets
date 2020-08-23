@@ -136,19 +136,18 @@ func (l *List) Reverse() {
 		return
 	}
 
-	element := l.header
-	// 第一个(为了减少在循环中做判断，至少有两个元素)
-	l.tail = element
-	oldNext := element.next
-	element.next = nil
+	current := l.header
+	l.tail = current
 
-	element = oldNext
-	for element != nil {
-		oldNext = element.next
-		element.next = l.header
-		l.header = element
+	var prev, next *element
+	for current != nil {
+		next = current.next
 
-		element = oldNext
+		current.next = prev
+		prev = current
+		l.header = current
+
+		current = next
 	}
 }
 
