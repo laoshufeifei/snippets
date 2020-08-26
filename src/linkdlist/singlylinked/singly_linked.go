@@ -56,7 +56,7 @@ func (l *List) Get(index int) (interface{}, bool) {
 
 // Remove ...
 func (l *List) Remove(index int) bool {
-	if l.outofRange(index) {
+	if l.outOfRange(index) {
 		return false
 	}
 
@@ -86,7 +86,7 @@ func (l *List) Remove(index int) bool {
 
 // Insert ...
 func (l *List) Insert(index int, values ...interface{}) bool {
-	if l.outofRange(index) {
+	if l.outOfRange(index) {
 		if index == l.size {
 			l.Append(values...)
 			return true
@@ -145,10 +145,10 @@ func (l *List) Reverse() {
 
 		current.next = prev
 		prev = current
-		l.header = current
 
 		current = next
 	}
+	l.header = prev
 }
 
 //IndexOf returns index of provided element
@@ -169,7 +169,7 @@ func (l *List) IndexOf(value interface{}) int {
 
 // Set ...
 func (l *List) Set(index int, value interface{}) bool {
-	if l.outofRange(index) {
+	if l.outOfRange(index) {
 		return true
 	}
 
@@ -180,7 +180,7 @@ func (l *List) Set(index int, value interface{}) bool {
 
 // Swap ...
 func (l *List) Swap(i, j int) bool {
-	if l.outofRange(i) || l.outofRange(j) {
+	if l.outOfRange(i) || l.outOfRange(j) {
 		return false
 	}
 
@@ -209,7 +209,7 @@ func (l *List) String() string {
 
 // getElementWithIndex
 func (l *List) getElementWithIndex(index int) *element {
-	if l.outofRange(index) {
+	if l.outOfRange(index) {
 		return nil
 	}
 
@@ -221,6 +221,6 @@ func (l *List) getElementWithIndex(index int) *element {
 	return foundElement
 }
 
-func (l *List) outofRange(index int) bool {
+func (l *List) outOfRange(index int) bool {
 	return index < 0 || index >= l.size
 }
