@@ -1,4 +1,4 @@
-package other
+package hashfuncs
 
 import (
 	"testing"

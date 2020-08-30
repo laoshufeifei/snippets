@@ -1,4 +1,4 @@
-package other
+package hashfuncs
 
 // https://golang.org/src/hash/fnv/fnv.go
 // https://en.wikipedia.org/wiki/Fowler-Noll-Vo_hash_function

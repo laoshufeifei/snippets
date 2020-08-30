@@ -1,4 +1,4 @@
-package other
+package hashfuncs
 
 // https://sites.google.com/site/murmurhash/
 // https://github.com/aviddiviner/go-murmur/blob/master/murmur2.go
