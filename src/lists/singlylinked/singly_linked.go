@@ -5,13 +5,14 @@ import (
 	"strings"
 )
 
-// Copy form gods
+// 参考 gods, 但是 gods 中没有使用虚拟节点
+// 启用虚拟节点的好处是在经常头插、尾插的时候方便，但是费一点内存
 // https://github.com/emirpasic/gods/blob/master/lists/singlylinkedlist/singlylinkedlist.go
 
 // List ...
 type List struct {
-	header *element
-	tail   *element
+	header *element // 虚拟头节点
+	tail   *element // 虚拟尾节点
 	size   int
 }
 
@@ -22,24 +23,24 @@ type element struct {
 
 // New ...
 func New(values ...interface{}) *List {
-	list := &List{}
-	if len(values) > 0 {
-		list.Append(values...)
+	l := &List{
+		header: &element{},
+		tail:   &element{},
 	}
-	return list
+	l.tail.next = l.header
+
+	if len(values) > 0 {
+		l.Append(values...)
+	}
+	return l
 }
 
 // Append ...
 func (l *List) Append(values ...interface{}) {
 	for _, value := range values {
 		newElements := &element{value: value}
-		if l.size == 0 {
-			l.header = newElements
-			l.tail = newElements
-		} else {
-			l.tail.next = newElements
-			l.tail = newElements
-		}
+		l.tail.next.next = newElements
+		l.tail.next = newElements
 		l.size++
 	}
 }
@@ -62,17 +63,17 @@ func (l *List) Remove(index int) bool {
 
 	// 已经检查过了，肯定存在
 	var prev *element
-	current := l.header
+	current := l.header.next
 	for i := 0; i != index; i++ {
 		prev = current
 		current = current.next
 	}
 
-	if current == l.header {
-		l.header = l.header.next
+	if l.header.next == current {
+		l.header.next = current.next
 	}
-	if current == l.tail {
-		l.tail = prev
+	if l.tail.next == current {
+		l.tail.next = prev
 	}
 
 	if prev != nil {
@@ -100,7 +101,7 @@ func (l *List) Insert(index int, values ...interface{}) bool {
 	}
 
 	var prev *element
-	current := l.header
+	current := l.header.next
 	for i := 0; i != index; i++ {
 		prev = current
 		current = current.next
@@ -121,11 +122,8 @@ func (l *List) Insert(index int, values ...interface{}) bool {
 // ["c","d"] -> Prepend(["a","b"]) -> ["a","b","c",d"]
 func (l *List) Prepend(values ...interface{}) {
 	for v := len(values) - 1; v >= 0; v-- {
-		newElements := &element{value: values[v], next: l.header}
-		l.header = newElements
-		if l.size == 0 {
-			l.tail = newElements
-		}
+		newElements := &element{value: values[v], next: l.header.next}
+		l.header.next = newElements
 		l.size++
 	}
 }
@@ -136,8 +134,8 @@ func (l *List) Reverse() {
 		return
 	}
 
-	current := l.header
-	l.tail = current
+	current := l.header.next
+	l.tail.next = current
 
 	var prev, next *element
 	for current != nil {
@@ -148,7 +146,7 @@ func (l *List) Reverse() {
 
 		current = next
 	}
-	l.header = prev
+	l.header.next = prev
 }
 
 //IndexOf returns index of provided element
@@ -158,7 +156,7 @@ func (l *List) IndexOf(value interface{}) int {
 	}
 
 	idx := 0
-	for item := l.header; item != nil; item = item.next {
+	for item := l.header.next; item != nil; item = item.next {
 		if item.value == value {
 			return idx
 		}
@@ -198,10 +196,20 @@ func (l *List) Size() int {
 	return l.size
 }
 
+// first ...
+func (l *List) firstElement() *element {
+	return l.header.next
+}
+
+// last ...
+func (l *List) lastElement() *element {
+	return l.tail.next
+}
+
 // String ...
 func (l *List) String() string {
 	values := []string{}
-	for element := l.header; element != nil; element = element.next {
+	for element := l.header.next; element != nil; element = element.next {
 		values = append(values, fmt.Sprintf("%v", element.value))
 	}
 	return strings.Join(values, ",")
@@ -213,7 +221,7 @@ func (l *List) getElementWithIndex(index int) *element {
 		return nil
 	}
 
-	foundElement := l.header
+	foundElement := l.header.next
 	for i := 0; i < index; i++ {
 		foundElement = foundElement.next
 	}
