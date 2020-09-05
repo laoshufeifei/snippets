@@ -2,11 +2,11 @@
 
 gossips 是一个记录、学习、实现常用数据结构和算法的工程。
 
-项目定位是个学习型的 demo，不一定用于生产，重要的是算法思想。
+项目定位是个学习型的 demo，不一定用于生产，所以很多实现没有支持泛型。
 
 造轮子（不是重新发明轮子）是为了更好的熟悉数据结构和算法。
 
-参考项目；
+参考项目: 
 
 [gods](https://github.com/emirpasic/gods)
 
@@ -23,34 +23,14 @@ LIST
 
 
 <details open>
-<summary>list </summary>
+<summary>lists </summary>
 
-- [x] arraylist
-- [x] singly linked list
+- [x] arraylist ([gods](https://github.com/emirpasic/gods/tree/master/lists/arraylist))
+- [x] singly linked list ([gods](https://github.com/emirpasic/gods/tree/master/lists/singlylinkedlist))
 - [ ] doubly linked list
 - [x] skip list
-</details>
-
-
-
-<details open>
-<summary>stack </summary>
-
 - [x] stack
-</details>
-
-
-<details open>
-<summary>queue </summary>
-
 - [x] queue
-</details>
-
-
-
-<details open>
-<summary>circular buffer </summary>
-
 - [x] circular buffer
 </details>
 
@@ -73,36 +53,8 @@ LIST
 - [x] BFS
 - [x] kruskal
 - [x] dijkstra
-- [x] bellmanFord
+- [x] bellman ford
 - [x] floyd
-</details>
-
-
-
-<details open>
-<summary>hash functions </summary>
-
-- [x] adler32
-- [x] fnv
-- [x] murmur2 32
-- [x] murmur3 32
-</details>
-
-
-
-<details open>
-<summary>hashset </summary>
-
-- [x] hashset(use map)
-</details>
-
-
-
-
-<details open>
-<summary>bloom filter </summary>
-
-- [x] bloom filter
 </details>
 
 
@@ -111,7 +63,7 @@ LIST
 <details open>
 <summary>sequence(string) </summary>
 
-- [x] brute_force
+- [x] brute force
 - [x] KMP
 - [x] boyer moore
 - [x] horspool
@@ -133,9 +85,17 @@ LIST
 </details>
 
 
+<details open>
+<summary>union find </summary>
+
+- [x] quick find
+- [x] quick union
+</details>
+
+
 
 <details open>
-<summary>a star </summary>
+<summary>GIS </summary>
 
 - [x] A star
 </details>
@@ -143,8 +103,15 @@ LIST
 
 
 <details open>
-<summary>union find </summary>
+<summary>other </summary>
 
-- [x] quick find
-- [x] quick union
+- [x] hashset(use native map)
+- [x] bloom filter
+- [x] hash functions
+	- [x] adler-32
+	- [x] fnv1-32
+	- [x] fnv1a-32
+	- [x] murmur2-32
+	- [x] murmur3-32
 </details>
+

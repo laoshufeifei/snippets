@@ -1,4 +1,4 @@
-package routing
+package astar
 
 import (
 	"testing"
@@ -19,7 +19,7 @@ func TestAStar(t *testing.T) {
 	}
 
 	m := newGridMap(s, len(s), len(s[0]))
-	results := m.astar()
+	results := m.run()
 	test.True(len(results) > 0)
 }
 
@@ -42,6 +42,6 @@ func TestAStar2(t *testing.T) {
 	}
 
 	m := newGridMap(s, len(s), len(s[0]))
-	results := m.astar()
+	results := m.run()
 	test.True(len(results) > 0)
 }

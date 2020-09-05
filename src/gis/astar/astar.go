@@ -1,4 +1,4 @@
-package routing
+package astar
 
 import "fmt"
 
@@ -56,7 +56,6 @@ func (m *gridMap) getGrid(x, y int) *Grid {
 	return m.grids[x][y]
 }
 
-// 不允许穿墙角
 func (m *gridMap) isReachable(g1, g2 *Grid) bool {
 	if g1.isNotAvailable() || g2.isNotAvailable() {
 		return false
@@ -66,6 +65,7 @@ func (m *gridMap) isReachable(g1, g2 *Grid) bool {
 		return true
 	}
 
+	// 不允许穿墙角
 	x1, y1 := g1.x, g1.y
 	x2, y2 := g2.x, g2.y
 
@@ -132,7 +132,7 @@ func (m *gridMap) processSurrounding(parent *Grid) []*Grid {
 			continue
 		}
 
-		// 如果已经在 close list中的 grid，需要再次加入到 open list
+		// 如果已经在 close list中的 grid，并且有更短路径了，需要再次加入到 open list
 		if m.closeList.Contains(child) {
 			if oldG <= newG {
 				continue
@@ -150,7 +150,7 @@ func (m *gridMap) processSurrounding(parent *Grid) []*Grid {
 	return results
 }
 
-func (m *gridMap) astar() []*Grid {
+func (m *gridMap) run() []*Grid {
 	found := false
 	m.openList.Push(m.begin)
 

@@ -41,7 +41,7 @@ func (b *Bloomfilter) Put(v string) {
 	}
 }
 
-// Contains ...
+// Contains 如果返回 false 一定不存在，如果返回 true 则不一定存在
 func (b *Bloomfilter) Contains(v string) bool {
 	hashCode := fnvHashString(v)
 	hashCode2 := hashCode >> 32

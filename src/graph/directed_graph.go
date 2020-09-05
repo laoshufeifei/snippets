@@ -1,9 +1,9 @@
 package graph
 
 import (
-	"gossips/src/hashset"
-	"gossips/src/queue"
-	"gossips/src/stack"
+	"gossips/src/lists/queue"
+	"gossips/src/lists/stack"
+	"gossips/src/other/hashset"
 	"gossips/src/unionfind"
 	"strings"
 )

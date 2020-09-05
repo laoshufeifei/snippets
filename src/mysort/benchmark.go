@@ -8,6 +8,7 @@ import (
 )
 
 // BenchmarkTestSorters ...
+// TODO: convert this test to benchmark test
 func BenchmarkTestSorters() {
 	rand.Seed(time.Now().UnixNano())
 

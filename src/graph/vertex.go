@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// vertex 图的定点
+// vertex 图的顶点
 type vertex struct {
 	name     string
 	inEdges  *EdgeSet
