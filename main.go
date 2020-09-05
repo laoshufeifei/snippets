@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gossips/src/mysort"
+	"snippets/src/mysort"
 )
 
 func updateInts(s []int) {

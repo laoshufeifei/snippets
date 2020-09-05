@@ -1,10 +1,10 @@
 package graph
 
 import (
-	"gossips/src/lists/queue"
-	"gossips/src/lists/stack"
-	"gossips/src/other/hashset"
-	"gossips/src/unionfind"
+	"snippets/src/lists/queue"
+	"snippets/src/lists/stack"
+	"snippets/src/other/hashset"
+	"snippets/src/unionfind"
 	"strings"
 )
 

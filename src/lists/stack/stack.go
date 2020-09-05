@@ -2,7 +2,7 @@ package stack
 
 import (
 	"fmt"
-	"gossips/src/lists/arraylist"
+	"snippets/src/lists/arraylist"
 	"strings"
 )
 

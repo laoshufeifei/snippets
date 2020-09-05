@@ -2,8 +2,8 @@ package binaryheap
 
 import (
 	"fmt"
-	"gossips/src/lists/arraylist"
-	"gossips/src/utils"
+	"snippets/src/lists/arraylist"
+	"snippets/src/utils"
 	"strings"
 )
 
