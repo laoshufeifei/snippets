@@ -49,13 +49,13 @@ const (
 )
 
 var (
-	bits   = []int{16, 8, 4, 2, 1}
-	base32 = []byte("0123456789bcdefghjkmnpqrstuvwxyz")
+	bits        = []int{16, 8, 4, 2, 1} // 组成 base32 字符的每一位的权重 (二进制)
+	base32Bytes = []byte("0123456789bcdefghjkmnpqrstuvwxyz")
 
 	// 偶数用第一个，奇数用第二个
 	// 以 north 的偶数距离，从原本的 0 往下偏移一个，即从 p 开始重新编码
 	// 以 2 举例，2在新的编码里是第四个，所以 2 的 north 就是原编码中的第四个(3)
-	neighbourBases = [4][2]string{
+	baseNeighbours = [4][2]string{
 		{"p0r21436x8zb9dcf5h7kjnmqesgutwvy", "bc01fg45238967deuvhjyznpkmstqrwx"}, // north
 		{"14365h7k9dcfesgujnmqp0r2twvyx8zb", "238967debc01fg45kmstqrwxuvhjyznp"}, // south
 		{"bc01fg45238967deuvhjyznpkmstqrwx", "p0r21436x8zb9dcf5h7kjnmqesgutwvy"}, // east
@@ -106,7 +106,7 @@ func encode(longitude, latitude float64, precision int) *cell {
 		isEven = !isEven
 		bit++
 		if bit == 5 {
-			code.WriteByte(base32[ch])
+			code.WriteByte(base32Bytes[ch])
 			length++
 			bit, ch = 0, 0
 		}
@@ -130,7 +130,7 @@ func decode(code string) *cell {
 	codes := []byte(code)
 	for i := 0; i < len(codes); i++ {
 		char := codes[i]
-		idx := bytes.IndexByte(base32, char)
+		idx := bytes.IndexByte(base32Bytes, char)
 		if idx == -1 {
 			break
 		}
@@ -170,16 +170,16 @@ func decode(code string) *cell {
 func adjacent(code string, direction directionType) string {
 	length := len(code)
 	lastChar, parent := code[length-1], code[:length-1]
-	typea := length & 0x1
+	flag := length & 0x1 // 偶数 0、奇数 1
 
-	border := borders[direction][typea]
+	border := borders[direction][flag]
 	if strings.IndexByte(border, lastChar) != -1 && length > 1 {
 		parent = adjacent(parent, direction)
 	}
 
-	neighbour := neighbourBases[direction][typea]
+	neighbour := baseNeighbours[direction][flag]
 	idx := strings.IndexByte(neighbour, lastChar)
-	return fmt.Sprintf("%s%c", parent, base32[idx])
+	return fmt.Sprintf("%s%c", parent, base32Bytes[idx])
 }
 
 //	northwest(0)	north(1)	northeast(2)
