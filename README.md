@@ -98,6 +98,8 @@ LIST
 <summary>GIS </summary>
 
 - [x] A star
+- [x] GeoHash
+- [x] Google s2 cellid(for study)
 </details>
 
 

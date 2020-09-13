@@ -9,7 +9,6 @@ import (
 
 func TestCellId(t *testing.T) {
 	test := assert.New(t)
-	test.Equal(1, 1)
 
 	cid := cellIDFromFaceIJ(1, 711197487, 903653800)
 	test.Equal(uint64(cid), uint64(3958611028950762539))

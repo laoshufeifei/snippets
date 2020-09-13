@@ -3,6 +3,8 @@ package sphere
 // 参考
 // https://github.com/golang/geo/blob/master/s2/cellid.go
 // https://halfrost.com/go_s2_cellid/
+// http://s2.sidewalklabs.com/
+// https://laoshufeifei.github.io/hilbert_curve/
 
 import "fmt"
 
