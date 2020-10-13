@@ -2,42 +2,42 @@ package circularbuffer
 
 import "time"
 
-// 简单的实现一个环形缓冲区，最小的 capability 为 4
+// 简单的实现一个环形缓冲区，最小的 capacity 为 4
 // 如果是一个读一个写，不用加锁；如果需要扩容功能则需要加锁(用户保证)
 // 优化策略：将 sleep 换成 条件变量
 
 // Ring ...
 type Ring struct {
-	capability uint32
-	buffer     []byte
-	readPos    uint32
-	writePos   uint32
-	isEOF      bool
+	capacity uint32
+	buffer   []byte
+	readPos  uint32
+	writePos uint32
+	isEOF    bool
 }
 
 // New  ...
 func New(cap int) *Ring {
-	capability := uint32((cap + 3) & ^3)
+	capacity := uint32((cap + 3) & ^3)
 	return &Ring{
-		capability: capability,
-		buffer:     make([]byte, capability),
+		capacity: capacity,
+		buffer:   make([]byte, capacity),
 	}
 }
 
-// Capability ...
-func (r *Ring) Capability() uint32 {
-	return r.capability
+// Capacity ...
+func (r *Ring) Capacity() uint32 {
+	return r.capacity
 }
 
 // IsEmpty ...
 func (r *Ring) IsEmpty() bool {
-	// return r.freeSize() == r.capability
+	// return r.freeSize() == r.capacity
 	return r.writePos == r.readPos
 }
 
 // IsFull ...
 func (r *Ring) IsFull() bool {
-	// return r.writePos-r.readPos == r.capability
+	// return r.writePos-r.readPos == r.capacity
 	return r.freeSize() == 0
 }
 
@@ -90,9 +90,9 @@ func (r *Ring) Write(data []byte) uint32 {
 
 // Expand 扩容一倍，注意用户要加锁
 func (r *Ring) Expand() {
-	oldCapacity, oldBufferSize := r.Capability(), r.bufferSize()
-	newCapability := oldCapacity << 1
-	newBuffer := make([]byte, newCapability)
+	oldCapacity, oldBufferSize := r.Capacity(), r.bufferSize()
+	newCapacity := oldCapacity << 1
+	newBuffer := make([]byte, newCapacity)
 
 	if oldBufferSize > 0 {
 		readOffset, writeOffset := r.readOffset(), r.writeOffset()
@@ -106,18 +106,18 @@ func (r *Ring) Expand() {
 
 	r.readPos = 0
 	r.writePos = oldBufferSize
-	r.capability = newCapability
+	r.capacity = newCapacity
 	r.buffer = newBuffer
 }
 
 func (r *Ring) readOffset() uint32 {
-	// r.readPos % r.capability
-	return r.readPos & (r.capability - 1)
+	// r.readPos % r.capacity
+	return r.readPos & (r.capacity - 1)
 }
 
 func (r *Ring) writeOffset() uint32 {
-	// r.writePos % r.capability
-	return r.writePos & (r.capability - 1)
+	// r.writePos % r.capacity
+	return r.writePos & (r.capacity - 1)
 }
 
 // 可以读的 size
@@ -127,7 +127,7 @@ func (r *Ring) bufferSize() (freeSize uint32) {
 
 // 可以写的 size
 func (r *Ring) freeSize() (freeSize uint32) {
-	freeSize = r.capability - (r.writePos - r.readPos)
+	freeSize = r.capacity - (r.writePos - r.readPos)
 	return
 }
 
@@ -142,7 +142,7 @@ func (r *Ring) readOnce(size uint32) []byte {
 	results := make([]byte, readSize)
 
 	// 第一段是从读指针开始向缓冲区末尾方向
-	copiedSize := uint32(copy(results[:readSize], r.buffer[readOffset:r.capability]))
+	copiedSize := uint32(copy(results[:readSize], r.buffer[readOffset:r.capacity]))
 	r.readPos += copiedSize
 
 	// 第二段是从缓冲区起始处读入余下的可读入数据(可能为0)
@@ -164,7 +164,7 @@ func (r *Ring) writeOnce(data []byte) uint32 {
 	}
 
 	// 第一段是从写指针开始向缓冲区末尾方向
-	copiedSize := uint32(copy(r.buffer[writeOffset:r.capability], data[:length]))
+	copiedSize := uint32(copy(r.buffer[writeOffset:r.capacity], data[:length]))
 	r.writePos += copiedSize
 
 	// 第二段是从缓冲区起始处写入余下的可写入数据(可能为0)

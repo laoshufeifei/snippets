@@ -46,13 +46,13 @@ func TestCapacity(t *testing.T) {
 	test := assert.New(t)
 
 	r := New(1)
-	test.Equal(r.Capability(), uint32(4))
+	test.Equal(r.Capacity(), uint32(4))
 
 	r = New(3)
-	test.Equal(r.Capability(), uint32(4))
+	test.Equal(r.Capacity(), uint32(4))
 
 	r = New(4)
-	test.Equal(r.Capability(), uint32(4))
+	test.Equal(r.Capacity(), uint32(4))
 }
 
 func TestFreeSize(t *testing.T) {
@@ -74,7 +74,7 @@ func TestReadWriteOnce(t *testing.T) {
 	test := assert.New(t)
 
 	r := New(6)
-	test.Equal(r.Capability(), uint32(8))
+	test.Equal(r.Capacity(), uint32(8))
 	test.True(r.IsEmpty())
 	test.False(r.IsFull())
 	test.Equal(r.bufferSize(), uint32(0))
@@ -147,12 +147,12 @@ func TestExpand1(t *testing.T) {
 	test := assert.New(t)
 
 	r := New(3)
-	test.Equal(r.Capability(), uint32(4))
+	test.Equal(r.Capacity(), uint32(4))
 	test.Equal(r.bufferSize(), uint32(0))
 	test.Equal(r.writeOffset(), uint32(0))
 
 	r.Expand()
-	test.Equal(r.Capability(), uint32(8))
+	test.Equal(r.Capacity(), uint32(8))
 	test.Equal(r.bufferSize(), uint32(0))
 	test.Equal(r.writeOffset(), uint32(0))
 
@@ -160,7 +160,7 @@ func TestExpand1(t *testing.T) {
 	r.Read(1)
 
 	r.Expand()
-	test.Equal(r.Capability(), uint32(16))
+	test.Equal(r.Capacity(), uint32(16))
 	test.Equal(r.bufferSize(), uint32(3))
 	test.Equal(r.writeOffset(), uint32(3))
 	test.Equal(r.freeSize(), uint32(13))
@@ -173,7 +173,7 @@ func TestExpand2(t *testing.T) {
 	test := assert.New(t)
 
 	r := New(8)
-	test.Equal(r.Capability(), uint32(8))
+	test.Equal(r.Capacity(), uint32(8))
 	test.Equal(r.bufferSize(), uint32(0))
 	test.Equal(r.writeOffset(), uint32(0))
 
@@ -183,7 +183,7 @@ func TestExpand2(t *testing.T) {
 	test.Equal(string(r.buffer), "81234567")
 
 	r.Expand()
-	test.Equal(r.Capability(), uint32(16))
+	test.Equal(r.Capacity(), uint32(16))
 	test.Equal(r.bufferSize(), uint32(8))
 	test.Equal(r.writeOffset(), uint32(8))
 	test.Equal(r.freeSize(), uint32(8))
