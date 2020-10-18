@@ -15,9 +15,13 @@ type Ring struct {
 	isEOF    bool
 }
 
-// New  ...
+// New 输入的 cap 必须是 2 的整数次幂
 func New(cap int) *Ring {
 	capacity := uint32((cap + 3) & ^3)
+	if capacity&(capacity-1) != 0 {
+		return nil
+	}
+
 	return &Ring{
 		capacity: capacity,
 		buffer:   make([]byte, capacity),

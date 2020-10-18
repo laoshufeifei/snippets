@@ -53,6 +53,9 @@ func TestCapacity(t *testing.T) {
 
 	r = New(4)
 	test.Equal(r.Capacity(), uint32(4))
+
+	r = New(12)
+	test.True(r == nil)
 }
 
 func TestFreeSize(t *testing.T) {

@@ -55,11 +55,14 @@ var (
 	// 偶数用第一个，奇数用第二个
 	// 以 north 的偶数距离，从原本的 0 往下偏移一个，即从 p 开始重新编码
 	// 以 2 举例，2在新的编码里是第四个，所以 2 的 north 就是原编码中的第四个(3)
-	baseNeighbours = [4][2]string{
-		{"p0r21436x8zb9dcf5h7kjnmqesgutwvy", "bc01fg45238967deuvhjyznpkmstqrwx"}, // north
-		{"14365h7k9dcfesgujnmqp0r2twvyx8zb", "238967debc01fg45kmstqrwxuvhjyznp"}, // south
-		{"bc01fg45238967deuvhjyznpkmstqrwx", "p0r21436x8zb9dcf5h7kjnmqesgutwvy"}, // east
-		{"238967debc01fg45kmstqrwxuvhjyznp", "14365h7k9dcfesgujnmqp0r2twvyx8zb"}, // west
+	baseNeighbours = [4][2][]byte{
+		{
+			[]byte("p0r21436x8zb9dcf5h7kjnmqesgutwvy"),
+			[]byte("bc01fg45238967deuvhjyznpkmstqrwx"),
+		}, // north
+		{[]byte("14365h7k9dcfesgujnmqp0r2twvyx8zb"), []byte("238967debc01fg45kmstqrwxuvhjyznp")}, // south
+		{[]byte("bc01fg45238967deuvhjyznpkmstqrwx"), []byte("p0r21436x8zb9dcf5h7kjnmqesgutwvy")}, // east
+		{[]byte("238967debc01fg45kmstqrwxuvhjyznp"), []byte("14365h7k9dcfesgujnmqp0r2twvyx8zb")}, // west
 	}
 	borders = [4][2]string{
 		{"prxz", "bcfguvyz"}, // north
@@ -178,7 +181,7 @@ func adjacent(code string, direction directionType) string {
 	}
 
 	neighbour := baseNeighbours[direction][flag]
-	idx := strings.IndexByte(neighbour, lastChar)
+	idx := bytes.IndexByte(neighbour, lastChar)
 	return fmt.Sprintf("%s%c", parent, base32Bytes[idx])
 }
 
