@@ -64,12 +64,12 @@ func TestFreeSize(t *testing.T) {
 	r := New(8)
 	test.Equal(r.freeSize(), uint32(8))
 
-	r.writePos = uint32(2)
-	r.readPos = uint32(math.MaxUint32) - uint32(2)
+	r.writeCount = uint32(2)
+	r.readCount = uint32(math.MaxUint32) - uint32(2)
 	test.Equal(r.freeSize(), uint32(3))
 
-	r.writePos = uint32(3)
-	r.readPos = uint32(math.MaxUint32) - uint32(2)
+	r.writeCount = uint32(3)
+	r.readCount = uint32(math.MaxUint32) - uint32(2)
 	test.Equal(r.freeSize(), uint32(2))
 }
 

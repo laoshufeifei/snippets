@@ -8,11 +8,11 @@ import "time"
 
 // Ring ...
 type Ring struct {
-	capacity uint32
-	buffer   []byte
-	readPos  uint32
-	writePos uint32
-	isEOF    bool
+	capacity   uint32
+	buffer     []byte
+	readCount  uint32
+	writeCount uint32
+	isEOF      bool
 }
 
 // New 输入的 cap 必须是 2 的整数次幂
@@ -36,12 +36,12 @@ func (r *Ring) Capacity() uint32 {
 // IsEmpty ...
 func (r *Ring) IsEmpty() bool {
 	// return r.freeSize() == r.capacity
-	return r.writePos == r.readPos
+	return r.writeCount == r.readCount
 }
 
 // IsFull ...
 func (r *Ring) IsFull() bool {
-	// return r.writePos-r.readPos == r.capacity
+	// return r.writeCount-r.readCount == r.capacity
 	return r.freeSize() == 0
 }
 
@@ -108,30 +108,30 @@ func (r *Ring) Expand() {
 		}
 	}
 
-	r.readPos = 0
-	r.writePos = oldBufferSize
+	r.readCount = 0
+	r.writeCount = oldBufferSize
 	r.capacity = newCapacity
 	r.buffer = newBuffer
 }
 
 func (r *Ring) readOffset() uint32 {
-	// r.readPos % r.capacity
-	return r.readPos & (r.capacity - 1)
+	// r.readCount % r.capacity
+	return r.readCount & (r.capacity - 1)
 }
 
 func (r *Ring) writeOffset() uint32 {
-	// r.writePos % r.capacity
-	return r.writePos & (r.capacity - 1)
+	// r.writeCount % r.capacity
+	return r.writeCount & (r.capacity - 1)
 }
 
 // 可以读的 size
 func (r *Ring) bufferSize() (freeSize uint32) {
-	return r.writePos - r.readPos
+	return r.writeCount - r.readCount
 }
 
 // 可以写的 size
 func (r *Ring) freeSize() (freeSize uint32) {
-	freeSize = r.capacity - (r.writePos - r.readPos)
+	freeSize = r.capacity - (r.writeCount - r.readCount)
 	return
 }
 
@@ -147,11 +147,11 @@ func (r *Ring) readOnce(size uint32) []byte {
 
 	// 第一段是从读指针开始向缓冲区末尾方向
 	copiedSize := uint32(copy(results[:readSize], r.buffer[readOffset:r.capacity]))
-	r.readPos += copiedSize
+	r.readCount += copiedSize
 
 	// 第二段是从缓冲区起始处读入余下的可读入数据(可能为0)
 	copiedSize = uint32(copy(results[copiedSize:readSize], r.buffer))
-	r.readPos += copiedSize
+	r.readCount += copiedSize
 
 	return results
 }
@@ -169,11 +169,11 @@ func (r *Ring) writeOnce(data []byte) uint32 {
 
 	// 第一段是从写指针开始向缓冲区末尾方向
 	copiedSize := uint32(copy(r.buffer[writeOffset:r.capacity], data[:length]))
-	r.writePos += copiedSize
+	r.writeCount += copiedSize
 
 	// 第二段是从缓冲区起始处写入余下的可写入数据(可能为0)
 	copiedSize = uint32(copy(r.buffer, data[copiedSize:length]))
-	r.writePos += copiedSize
+	r.writeCount += copiedSize
 
 	return length
 }
