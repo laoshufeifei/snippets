@@ -665,18 +665,11 @@ func (n *Node) precursor() *Node {
 		return n.left.rightmost()
 	}
 
-	// n.left is nil
-	p := n.parent
-	if n.whichSide() == rightSide {
-		return p
-	}
-
-	// n is left child and n.left is nil
-	for p != nil {
-		if p.whichSide() == rightSide {
-			return p.parent
+	for n != nil {
+		if n.whichSide() == rightSide {
+			return n.parent
 		}
-		p = p.parent
+		n = n.parent
 	}
 
 	return nil
@@ -692,17 +685,11 @@ func (n *Node) successor() *Node {
 		return n.right.leftmost()
 	}
 
-	p := n.parent
-	if n.whichSide() == leftSide {
-		return p
-	}
-
-	// n is right child and n.right is nil
-	for p != nil {
-		if p.whichSide() == leftSide {
-			return p.parent
+	for n != nil {
+		if n.whichSide() == leftSide {
+			return n.parent
 		}
-		p = p.parent
+		n = n.parent
 	}
 
 	return nil
