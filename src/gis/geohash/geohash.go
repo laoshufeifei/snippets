@@ -53,7 +53,7 @@ var (
 	base32Bytes = []byte("0123456789bcdefghjkmnpqrstuvwxyz")
 
 	// 偶数用第一个，奇数用第二个
-	// 以 north 的偶数距离，从原本的 0 往下偏移一个，即从 p 开始重新编码
+	// 以 north 的偶数举例，从原本的 0 往下偏移一个，即从 p 开始重新编码
 	// 以 2 举例，2在新的编码里是第四个，所以 2 的 north 就是原编码中的第四个(3)
 	baseNeighbours = [4][2][]byte{
 		{

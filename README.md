@@ -41,6 +41,8 @@ LIST
 
 - [x] binary heap
 - [x] red black tree
+- [x] binary indexed tree (树状数组)
+- [x] segment tree (线段树)
 </details>
 
 
